@@ -90,7 +90,9 @@ class TxWeightCalculator:
                 + multisig_script_size
             )
         elif script_type == IST.SPENDTAPROOT:
-            return 1 + _TXSIZE_SCHNORR_SIGNATURE
+            return (
+                1 + _TXSIZE_SCHNORR_SIGNATURE + (1 if i.anti_exfil_sighash == 1 else 0)
+            )
         else:
             return 1 + _TXSIZE_DER_SIGNATURE + 1 + _TXSIZE_PUBKEY
 

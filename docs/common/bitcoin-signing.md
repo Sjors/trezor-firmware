@@ -507,3 +507,64 @@ done carefully.
 
 We expect to gradually deprecate the `TransactionType`. At that point, the new-style
 types will be fully independent.
+
+## Experimental interactive Taproot anti-exfil
+
+Firmware advertising `Capability_BitcoinAntiExfil` (provisional value 100)
+supports the single-signer BIP340 protocol in the draft BIP-EXFIL. It applies to
+BIP86 Taproot key-path inputs and accepts only `SIGHASH_DEFAULT` or `SIGHASH_ALL`.
+The resulting signature is an ordinary BIP340 signature; the host must also
+verify the nonce relation before publishing it.
+
+Both rounds use the normal `SignTx` transaction authorization flow, with
+`serialize=false`. Add these provisional fields to each protected `TxInput`
+(`TxInputType` for the legacy wire encoding):
+
+| Field | Number | Round one | Round two |
+| --- | --- | --- | --- |
+| `anti_exfil_host_commitment` | 100 | 32-byte host commitment `h` | Same `h` |
+| `anti_exfil_signer_nonce` | 101 | Absent | Originally recorded compressed 33-byte `R0` |
+| `anti_exfil_host_entropy` | 102 | Absent | 32-byte scalar `rho` opening `h` |
+| `anti_exfil_sighash` | 103 | 0 (DEFAULT) or 1 (ALL) | Same value |
+
+Round one returns `TxRequestSerializedType.anti_exfil_nonce` (field 4) and the
+normal `signature_index`, with no `signature`. This receipt retains the nonce's
+parity. Round two returns the normal 64-byte `signature`, with no nonce receipt.
+The bridge adds the `0x01` sighash suffix when constructing an ALL PSBT signature.
+
+The firmware derives the actual tweaked signing key, binds nonce derivation to
+the independently computed transaction digest and `h`, checks both the opening
+and the originally recorded full nonce point, adds `rho`, and self-verifies the
+signature before release. It retains no secret nonce state between rounds. New
+fields participate in the existing input integrity hash so they cannot change
+between device transaction requests. Malformed or partial transcripts fail;
+there is no fallback to ordinary signing.
+
+The domains `BIP-EXFIL/host` and `BIP-EXFIL/nonce`, capability value, and protobuf
+field numbers are experimental. Assigning a BIP number may require coordinated
+domain changes and regenerated vectors. No general sign-to-contract API or
+secp256k1-zkp submodule update is needed: the crypto wrapper uses the existing
+public custom Schnorr nonce API with a separate derivation domain.
+
+The host must record `R0` before disclosing `rho`, verify the ordinary signature
+and `x(R0 + rho*G)`, and retain that original `R0` when checking the final reply.
+Automatic retries reuse the exact key, digest, `rho`, `h`, and `R0`; they must not
+sample new randomness after a refusal. Nonce transcripts must not be broadcast or
+included in routine diagnostic logs.
+
+Shared C primitive vectors can be run with:
+
+```sh
+make -C crypto tests/libtrezor-crypto.so VALGRIND=0
+python3 crypto/tests/test_anti_exfil.py
+```
+
+Core's MicroPython binding vectors run with:
+
+```sh
+make -C core test TESTOPTS="test_trezor.crypto.curve.bip340_anti_exfil.py test_apps.bitcoin.anti_exfil.py"
+```
+
+The coordinated HWI branch supplies complete One and T device tests for both
+hash types, deterministic reconnects, invalid device-side openings and nonce
+commitments, host proof verification, and regtest confirmation.

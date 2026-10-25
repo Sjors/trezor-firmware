@@ -280,6 +280,7 @@ message TxRequest {
         optional uint32 signature_index = 1;  // 'signature' field contains signed input of this index
         optional bytes signature = 2;         // signature of the signature_index input
         optional bytes serialized_tx = 3;     // part of serialized and signed transaction
+        optional bytes anti_exfil_nonce = 4;  // draft BIP-EXFIL nonce commitment, not a signature
     }
 }
 
@@ -347,6 +348,11 @@ message TxAck {
             optional bytes script_pubkey = 19;                  // scriptPubKey of the previous output spent by this
                                                                 // input, only set of EXTERNAL inputs
             optional uint32 coinjoin_flags = 20 [default = 0];  // bit field of CoinJoin-specific flags
+            // Provisional transport for the draft BIP-EXFIL single-signer protocol.
+            optional bytes anti_exfil_host_commitment = 100;  // 32 bytes; required in both rounds
+            optional bytes anti_exfil_signer_nonce = 101;     // full compressed 33-byte R0; round two only
+            optional bytes anti_exfil_host_entropy = 102;     // 32-byte nonzero scalar; round two only
+            optional uint32 anti_exfil_sighash = 103;         // DEFAULT (0) or ALL (1)
         }
         /**
          * Structure representing compiled transaction output
@@ -410,6 +416,11 @@ message TxInput {
     optional bytes script_pubkey =
         19;  // scriptPubKey of the previous output spent by this input, only set of EXTERNAL inputs
     optional uint32 coinjoin_flags = 20 [default = 0];  // bit field of CoinJoin-specific flags
+    // Provisional transport for the draft BIP-EXFIL single-signer protocol.
+    optional bytes anti_exfil_host_commitment = 100;  // 32 bytes; required in both rounds
+    optional bytes anti_exfil_signer_nonce = 101;     // full compressed 33-byte R0; round two only
+    optional bytes anti_exfil_host_entropy = 102;     // 32-byte nonzero scalar; round two only
+    optional uint32 anti_exfil_sighash = 103;         // DEFAULT (0) or ALL (1)
 }
 
 /** Data type for transaction output to be signed.

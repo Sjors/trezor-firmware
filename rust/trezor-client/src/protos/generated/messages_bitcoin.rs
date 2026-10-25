@@ -4453,6 +4453,8 @@ pub mod tx_request {
         pub signature: ::std::option::Option<::std::vec::Vec<u8>>,
         // @@protoc_insertion_point(field:hw.trezor.messages.bitcoin.TxRequest.TxRequestSerializedType.serialized_tx)
         pub serialized_tx: ::std::option::Option<::std::vec::Vec<u8>>,
+        // @@protoc_insertion_point(field:hw.trezor.messages.bitcoin.TxRequest.TxRequestSerializedType.anti_exfil_nonce)
+        pub anti_exfil_nonce: ::std::option::Option<::std::vec::Vec<u8>>,
         // special fields
         // @@protoc_insertion_point(special_field:hw.trezor.messages.bitcoin.TxRequest.TxRequestSerializedType.special_fields)
         pub special_fields: ::protobuf::SpecialFields,
@@ -4560,8 +4562,44 @@ pub mod tx_request {
             self.serialized_tx.take().unwrap_or_else(|| ::std::vec::Vec::new())
         }
 
+        // optional bytes anti_exfil_nonce = 4;
+
+        pub fn anti_exfil_nonce(&self) -> &[u8] {
+            match self.anti_exfil_nonce.as_ref() {
+                Some(v) => v,
+                None => &[],
+            }
+        }
+
+        pub fn clear_anti_exfil_nonce(&mut self) {
+            self.anti_exfil_nonce = ::std::option::Option::None;
+        }
+
+        pub fn has_anti_exfil_nonce(&self) -> bool {
+            self.anti_exfil_nonce.is_some()
+        }
+
+        // Param is passed by value, moved
+        pub fn set_anti_exfil_nonce(&mut self, v: ::std::vec::Vec<u8>) {
+            self.anti_exfil_nonce = ::std::option::Option::Some(v);
+        }
+
+        // Mutable pointer to the field.
+        // If field is not initialized, it is initialized with default value first.
+        pub fn mut_anti_exfil_nonce(&mut self) -> &mut ::std::vec::Vec<u8> {
+            if self.anti_exfil_nonce.is_none() {
+                self.anti_exfil_nonce = ::std::option::Option::Some(::std::vec::Vec::new());
+            }
+            self.anti_exfil_nonce.as_mut().unwrap()
+        }
+
+        // Take field
+        pub fn take_anti_exfil_nonce(&mut self) -> ::std::vec::Vec<u8> {
+            self.anti_exfil_nonce.take().unwrap_or_else(|| ::std::vec::Vec::new())
+        }
+
         pub(in super) fn generated_message_descriptor_data() -> ::protobuf::reflect::GeneratedMessageDescriptorData {
-            let mut fields = ::std::vec::Vec::with_capacity(3);
+            let mut fields = ::std::vec::Vec::with_capacity(4);
             let mut oneofs = ::std::vec::Vec::with_capacity(0);
             fields.push(::protobuf::reflect::rt::v2::make_option_accessor::<_, _>(
                 "signature_index",
@@ -4577,6 +4615,11 @@ pub mod tx_request {
                 "serialized_tx",
                 |m: &TxRequestSerializedType| { &m.serialized_tx },
                 |m: &mut TxRequestSerializedType| { &mut m.serialized_tx },
+            ));
+            fields.push(::protobuf::reflect::rt::v2::make_option_accessor::<_, _>(
+                "anti_exfil_nonce",
+                |m: &TxRequestSerializedType| { &m.anti_exfil_nonce },
+                |m: &mut TxRequestSerializedType| { &mut m.anti_exfil_nonce },
             ));
             ::protobuf::reflect::GeneratedMessageDescriptorData::new_2::<TxRequestSerializedType>(
                 "TxRequest.TxRequestSerializedType",
@@ -4605,6 +4648,9 @@ pub mod tx_request {
                     26 => {
                         self.serialized_tx = ::std::option::Option::Some(is.read_bytes()?);
                     },
+                    34 => {
+                        self.anti_exfil_nonce = ::std::option::Option::Some(is.read_bytes()?);
+                    },
                     tag => {
                         ::protobuf::rt::read_unknown_or_skip_group(tag, is, self.special_fields.mut_unknown_fields())?;
                     },
@@ -4626,6 +4672,9 @@ pub mod tx_request {
             if let Some(v) = self.serialized_tx.as_ref() {
                 my_size += ::protobuf::rt::bytes_size(3, &v);
             }
+            if let Some(v) = self.anti_exfil_nonce.as_ref() {
+                my_size += ::protobuf::rt::bytes_size(4, &v);
+            }
             my_size += ::protobuf::rt::unknown_fields_size(self.special_fields.unknown_fields());
             self.special_fields.cached_size().set(my_size as u32);
             my_size
@@ -4640,6 +4689,9 @@ pub mod tx_request {
             }
             if let Some(v) = self.serialized_tx.as_ref() {
                 os.write_bytes(3, v)?;
+            }
+            if let Some(v) = self.anti_exfil_nonce.as_ref() {
+                os.write_bytes(4, v)?;
             }
             os.write_unknown_fields(self.special_fields.unknown_fields())?;
             ::std::result::Result::Ok(())
@@ -4661,6 +4713,7 @@ pub mod tx_request {
             self.signature_index = ::std::option::Option::None;
             self.signature = ::std::option::Option::None;
             self.serialized_tx = ::std::option::Option::None;
+            self.anti_exfil_nonce = ::std::option::Option::None;
             self.special_fields.clear();
         }
 
@@ -4669,6 +4722,7 @@ pub mod tx_request {
                 signature_index: ::std::option::Option::None,
                 signature: ::std::option::Option::None,
                 serialized_tx: ::std::option::Option::None,
+                anti_exfil_nonce: ::std::option::Option::None,
                 special_fields: ::protobuf::SpecialFields::new(),
             };
             &instance
@@ -5555,6 +5609,14 @@ pub mod tx_ack {
             pub script_pubkey: ::std::option::Option<::std::vec::Vec<u8>>,
             // @@protoc_insertion_point(field:hw.trezor.messages.bitcoin.TxAck.TransactionType.TxInputType.coinjoin_flags)
             pub coinjoin_flags: ::std::option::Option<u32>,
+            // @@protoc_insertion_point(field:hw.trezor.messages.bitcoin.TxAck.TransactionType.TxInputType.anti_exfil_host_commitment)
+            pub anti_exfil_host_commitment: ::std::option::Option<::std::vec::Vec<u8>>,
+            // @@protoc_insertion_point(field:hw.trezor.messages.bitcoin.TxAck.TransactionType.TxInputType.anti_exfil_signer_nonce)
+            pub anti_exfil_signer_nonce: ::std::option::Option<::std::vec::Vec<u8>>,
+            // @@protoc_insertion_point(field:hw.trezor.messages.bitcoin.TxAck.TransactionType.TxInputType.anti_exfil_host_entropy)
+            pub anti_exfil_host_entropy: ::std::option::Option<::std::vec::Vec<u8>>,
+            // @@protoc_insertion_point(field:hw.trezor.messages.bitcoin.TxAck.TransactionType.TxInputType.anti_exfil_sighash)
+            pub anti_exfil_sighash: ::std::option::Option<u32>,
             // special fields
             // @@protoc_insertion_point(special_field:hw.trezor.messages.bitcoin.TxAck.TransactionType.TxInputType.special_fields)
             pub special_fields: ::protobuf::SpecialFields,
@@ -5981,8 +6043,135 @@ pub mod tx_ack {
                 self.coinjoin_flags = ::std::option::Option::Some(v);
             }
 
+            // optional bytes anti_exfil_host_commitment = 100;
+
+            pub fn anti_exfil_host_commitment(&self) -> &[u8] {
+                match self.anti_exfil_host_commitment.as_ref() {
+                    Some(v) => v,
+                    None => &[],
+                }
+            }
+
+            pub fn clear_anti_exfil_host_commitment(&mut self) {
+                self.anti_exfil_host_commitment = ::std::option::Option::None;
+            }
+
+            pub fn has_anti_exfil_host_commitment(&self) -> bool {
+                self.anti_exfil_host_commitment.is_some()
+            }
+
+            // Param is passed by value, moved
+            pub fn set_anti_exfil_host_commitment(&mut self, v: ::std::vec::Vec<u8>) {
+                self.anti_exfil_host_commitment = ::std::option::Option::Some(v);
+            }
+
+            // Mutable pointer to the field.
+            // If field is not initialized, it is initialized with default value first.
+            pub fn mut_anti_exfil_host_commitment(&mut self) -> &mut ::std::vec::Vec<u8> {
+                if self.anti_exfil_host_commitment.is_none() {
+                    self.anti_exfil_host_commitment = ::std::option::Option::Some(::std::vec::Vec::new());
+                }
+                self.anti_exfil_host_commitment.as_mut().unwrap()
+            }
+
+            // Take field
+            pub fn take_anti_exfil_host_commitment(&mut self) -> ::std::vec::Vec<u8> {
+                self.anti_exfil_host_commitment.take().unwrap_or_else(|| ::std::vec::Vec::new())
+            }
+
+            // optional bytes anti_exfil_signer_nonce = 101;
+
+            pub fn anti_exfil_signer_nonce(&self) -> &[u8] {
+                match self.anti_exfil_signer_nonce.as_ref() {
+                    Some(v) => v,
+                    None => &[],
+                }
+            }
+
+            pub fn clear_anti_exfil_signer_nonce(&mut self) {
+                self.anti_exfil_signer_nonce = ::std::option::Option::None;
+            }
+
+            pub fn has_anti_exfil_signer_nonce(&self) -> bool {
+                self.anti_exfil_signer_nonce.is_some()
+            }
+
+            // Param is passed by value, moved
+            pub fn set_anti_exfil_signer_nonce(&mut self, v: ::std::vec::Vec<u8>) {
+                self.anti_exfil_signer_nonce = ::std::option::Option::Some(v);
+            }
+
+            // Mutable pointer to the field.
+            // If field is not initialized, it is initialized with default value first.
+            pub fn mut_anti_exfil_signer_nonce(&mut self) -> &mut ::std::vec::Vec<u8> {
+                if self.anti_exfil_signer_nonce.is_none() {
+                    self.anti_exfil_signer_nonce = ::std::option::Option::Some(::std::vec::Vec::new());
+                }
+                self.anti_exfil_signer_nonce.as_mut().unwrap()
+            }
+
+            // Take field
+            pub fn take_anti_exfil_signer_nonce(&mut self) -> ::std::vec::Vec<u8> {
+                self.anti_exfil_signer_nonce.take().unwrap_or_else(|| ::std::vec::Vec::new())
+            }
+
+            // optional bytes anti_exfil_host_entropy = 102;
+
+            pub fn anti_exfil_host_entropy(&self) -> &[u8] {
+                match self.anti_exfil_host_entropy.as_ref() {
+                    Some(v) => v,
+                    None => &[],
+                }
+            }
+
+            pub fn clear_anti_exfil_host_entropy(&mut self) {
+                self.anti_exfil_host_entropy = ::std::option::Option::None;
+            }
+
+            pub fn has_anti_exfil_host_entropy(&self) -> bool {
+                self.anti_exfil_host_entropy.is_some()
+            }
+
+            // Param is passed by value, moved
+            pub fn set_anti_exfil_host_entropy(&mut self, v: ::std::vec::Vec<u8>) {
+                self.anti_exfil_host_entropy = ::std::option::Option::Some(v);
+            }
+
+            // Mutable pointer to the field.
+            // If field is not initialized, it is initialized with default value first.
+            pub fn mut_anti_exfil_host_entropy(&mut self) -> &mut ::std::vec::Vec<u8> {
+                if self.anti_exfil_host_entropy.is_none() {
+                    self.anti_exfil_host_entropy = ::std::option::Option::Some(::std::vec::Vec::new());
+                }
+                self.anti_exfil_host_entropy.as_mut().unwrap()
+            }
+
+            // Take field
+            pub fn take_anti_exfil_host_entropy(&mut self) -> ::std::vec::Vec<u8> {
+                self.anti_exfil_host_entropy.take().unwrap_or_else(|| ::std::vec::Vec::new())
+            }
+
+            // optional uint32 anti_exfil_sighash = 103;
+
+            pub fn anti_exfil_sighash(&self) -> u32 {
+                self.anti_exfil_sighash.unwrap_or(0)
+            }
+
+            pub fn clear_anti_exfil_sighash(&mut self) {
+                self.anti_exfil_sighash = ::std::option::Option::None;
+            }
+
+            pub fn has_anti_exfil_sighash(&self) -> bool {
+                self.anti_exfil_sighash.is_some()
+            }
+
+            // Param is passed by value, moved
+            pub fn set_anti_exfil_sighash(&mut self, v: u32) {
+                self.anti_exfil_sighash = ::std::option::Option::Some(v);
+            }
+
             pub(in super::super) fn generated_message_descriptor_data() -> ::protobuf::reflect::GeneratedMessageDescriptorData {
-                let mut fields = ::std::vec::Vec::with_capacity(17);
+                let mut fields = ::std::vec::Vec::with_capacity(21);
                 let mut oneofs = ::std::vec::Vec::with_capacity(0);
                 fields.push(::protobuf::reflect::rt::v2::make_vec_simpler_accessor::<_, _>(
                     "address_n",
@@ -6069,6 +6258,26 @@ pub mod tx_ack {
                     |m: &TxInputType| { &m.coinjoin_flags },
                     |m: &mut TxInputType| { &mut m.coinjoin_flags },
                 ));
+                fields.push(::protobuf::reflect::rt::v2::make_option_accessor::<_, _>(
+                    "anti_exfil_host_commitment",
+                    |m: &TxInputType| { &m.anti_exfil_host_commitment },
+                    |m: &mut TxInputType| { &mut m.anti_exfil_host_commitment },
+                ));
+                fields.push(::protobuf::reflect::rt::v2::make_option_accessor::<_, _>(
+                    "anti_exfil_signer_nonce",
+                    |m: &TxInputType| { &m.anti_exfil_signer_nonce },
+                    |m: &mut TxInputType| { &mut m.anti_exfil_signer_nonce },
+                ));
+                fields.push(::protobuf::reflect::rt::v2::make_option_accessor::<_, _>(
+                    "anti_exfil_host_entropy",
+                    |m: &TxInputType| { &m.anti_exfil_host_entropy },
+                    |m: &mut TxInputType| { &mut m.anti_exfil_host_entropy },
+                ));
+                fields.push(::protobuf::reflect::rt::v2::make_option_accessor::<_, _>(
+                    "anti_exfil_sighash",
+                    |m: &TxInputType| { &m.anti_exfil_sighash },
+                    |m: &mut TxInputType| { &mut m.anti_exfil_sighash },
+                ));
                 ::protobuf::reflect::GeneratedMessageDescriptorData::new_2::<TxInputType>(
                     "TxAck.TransactionType.TxInputType",
                     fields,
@@ -6152,6 +6361,18 @@ pub mod tx_ack {
                         160 => {
                             self.coinjoin_flags = ::std::option::Option::Some(is.read_uint32()?);
                         },
+                        802 => {
+                            self.anti_exfil_host_commitment = ::std::option::Option::Some(is.read_bytes()?);
+                        },
+                        810 => {
+                            self.anti_exfil_signer_nonce = ::std::option::Option::Some(is.read_bytes()?);
+                        },
+                        818 => {
+                            self.anti_exfil_host_entropy = ::std::option::Option::Some(is.read_bytes()?);
+                        },
+                        824 => {
+                            self.anti_exfil_sighash = ::std::option::Option::Some(is.read_uint32()?);
+                        },
                         tag => {
                             ::protobuf::rt::read_unknown_or_skip_group(tag, is, self.special_fields.mut_unknown_fields())?;
                         },
@@ -6216,6 +6437,18 @@ pub mod tx_ack {
                 if let Some(v) = self.coinjoin_flags {
                     my_size += ::protobuf::rt::uint32_size(20, v);
                 }
+                if let Some(v) = self.anti_exfil_host_commitment.as_ref() {
+                    my_size += ::protobuf::rt::bytes_size(100, &v);
+                }
+                if let Some(v) = self.anti_exfil_signer_nonce.as_ref() {
+                    my_size += ::protobuf::rt::bytes_size(101, &v);
+                }
+                if let Some(v) = self.anti_exfil_host_entropy.as_ref() {
+                    my_size += ::protobuf::rt::bytes_size(102, &v);
+                }
+                if let Some(v) = self.anti_exfil_sighash {
+                    my_size += ::protobuf::rt::uint32_size(103, v);
+                }
                 my_size += ::protobuf::rt::unknown_fields_size(self.special_fields.unknown_fields());
                 self.special_fields.cached_size().set(my_size as u32);
                 my_size
@@ -6273,6 +6506,18 @@ pub mod tx_ack {
                 if let Some(v) = self.coinjoin_flags {
                     os.write_uint32(20, v)?;
                 }
+                if let Some(v) = self.anti_exfil_host_commitment.as_ref() {
+                    os.write_bytes(100, v)?;
+                }
+                if let Some(v) = self.anti_exfil_signer_nonce.as_ref() {
+                    os.write_bytes(101, v)?;
+                }
+                if let Some(v) = self.anti_exfil_host_entropy.as_ref() {
+                    os.write_bytes(102, v)?;
+                }
+                if let Some(v) = self.anti_exfil_sighash {
+                    os.write_uint32(103, v)?;
+                }
                 os.write_unknown_fields(self.special_fields.unknown_fields())?;
                 ::std::result::Result::Ok(())
             }
@@ -6307,6 +6552,10 @@ pub mod tx_ack {
                 self.decred_staking_spend = ::std::option::Option::None;
                 self.script_pubkey = ::std::option::Option::None;
                 self.coinjoin_flags = ::std::option::Option::None;
+                self.anti_exfil_host_commitment = ::std::option::Option::None;
+                self.anti_exfil_signer_nonce = ::std::option::Option::None;
+                self.anti_exfil_host_entropy = ::std::option::Option::None;
+                self.anti_exfil_sighash = ::std::option::Option::None;
                 self.special_fields.clear();
             }
 
@@ -6329,6 +6578,10 @@ pub mod tx_ack {
                     decred_staking_spend: ::std::option::Option::None,
                     script_pubkey: ::std::option::Option::None,
                     coinjoin_flags: ::std::option::Option::None,
+                    anti_exfil_host_commitment: ::std::option::Option::None,
+                    anti_exfil_signer_nonce: ::std::option::Option::None,
+                    anti_exfil_host_entropy: ::std::option::Option::None,
+                    anti_exfil_sighash: ::std::option::Option::None,
                     special_fields: ::protobuf::SpecialFields::new(),
                 };
                 &instance
@@ -7095,6 +7348,14 @@ pub struct TxInput {
     pub script_pubkey: ::std::option::Option<::std::vec::Vec<u8>>,
     // @@protoc_insertion_point(field:hw.trezor.messages.bitcoin.TxInput.coinjoin_flags)
     pub coinjoin_flags: ::std::option::Option<u32>,
+    // @@protoc_insertion_point(field:hw.trezor.messages.bitcoin.TxInput.anti_exfil_host_commitment)
+    pub anti_exfil_host_commitment: ::std::option::Option<::std::vec::Vec<u8>>,
+    // @@protoc_insertion_point(field:hw.trezor.messages.bitcoin.TxInput.anti_exfil_signer_nonce)
+    pub anti_exfil_signer_nonce: ::std::option::Option<::std::vec::Vec<u8>>,
+    // @@protoc_insertion_point(field:hw.trezor.messages.bitcoin.TxInput.anti_exfil_host_entropy)
+    pub anti_exfil_host_entropy: ::std::option::Option<::std::vec::Vec<u8>>,
+    // @@protoc_insertion_point(field:hw.trezor.messages.bitcoin.TxInput.anti_exfil_sighash)
+    pub anti_exfil_sighash: ::std::option::Option<u32>,
     // special fields
     // @@protoc_insertion_point(special_field:hw.trezor.messages.bitcoin.TxInput.special_fields)
     pub special_fields: ::protobuf::SpecialFields,
@@ -7521,8 +7782,135 @@ impl TxInput {
         self.coinjoin_flags = ::std::option::Option::Some(v);
     }
 
+    // optional bytes anti_exfil_host_commitment = 100;
+
+    pub fn anti_exfil_host_commitment(&self) -> &[u8] {
+        match self.anti_exfil_host_commitment.as_ref() {
+            Some(v) => v,
+            None => &[],
+        }
+    }
+
+    pub fn clear_anti_exfil_host_commitment(&mut self) {
+        self.anti_exfil_host_commitment = ::std::option::Option::None;
+    }
+
+    pub fn has_anti_exfil_host_commitment(&self) -> bool {
+        self.anti_exfil_host_commitment.is_some()
+    }
+
+    // Param is passed by value, moved
+    pub fn set_anti_exfil_host_commitment(&mut self, v: ::std::vec::Vec<u8>) {
+        self.anti_exfil_host_commitment = ::std::option::Option::Some(v);
+    }
+
+    // Mutable pointer to the field.
+    // If field is not initialized, it is initialized with default value first.
+    pub fn mut_anti_exfil_host_commitment(&mut self) -> &mut ::std::vec::Vec<u8> {
+        if self.anti_exfil_host_commitment.is_none() {
+            self.anti_exfil_host_commitment = ::std::option::Option::Some(::std::vec::Vec::new());
+        }
+        self.anti_exfil_host_commitment.as_mut().unwrap()
+    }
+
+    // Take field
+    pub fn take_anti_exfil_host_commitment(&mut self) -> ::std::vec::Vec<u8> {
+        self.anti_exfil_host_commitment.take().unwrap_or_else(|| ::std::vec::Vec::new())
+    }
+
+    // optional bytes anti_exfil_signer_nonce = 101;
+
+    pub fn anti_exfil_signer_nonce(&self) -> &[u8] {
+        match self.anti_exfil_signer_nonce.as_ref() {
+            Some(v) => v,
+            None => &[],
+        }
+    }
+
+    pub fn clear_anti_exfil_signer_nonce(&mut self) {
+        self.anti_exfil_signer_nonce = ::std::option::Option::None;
+    }
+
+    pub fn has_anti_exfil_signer_nonce(&self) -> bool {
+        self.anti_exfil_signer_nonce.is_some()
+    }
+
+    // Param is passed by value, moved
+    pub fn set_anti_exfil_signer_nonce(&mut self, v: ::std::vec::Vec<u8>) {
+        self.anti_exfil_signer_nonce = ::std::option::Option::Some(v);
+    }
+
+    // Mutable pointer to the field.
+    // If field is not initialized, it is initialized with default value first.
+    pub fn mut_anti_exfil_signer_nonce(&mut self) -> &mut ::std::vec::Vec<u8> {
+        if self.anti_exfil_signer_nonce.is_none() {
+            self.anti_exfil_signer_nonce = ::std::option::Option::Some(::std::vec::Vec::new());
+        }
+        self.anti_exfil_signer_nonce.as_mut().unwrap()
+    }
+
+    // Take field
+    pub fn take_anti_exfil_signer_nonce(&mut self) -> ::std::vec::Vec<u8> {
+        self.anti_exfil_signer_nonce.take().unwrap_or_else(|| ::std::vec::Vec::new())
+    }
+
+    // optional bytes anti_exfil_host_entropy = 102;
+
+    pub fn anti_exfil_host_entropy(&self) -> &[u8] {
+        match self.anti_exfil_host_entropy.as_ref() {
+            Some(v) => v,
+            None => &[],
+        }
+    }
+
+    pub fn clear_anti_exfil_host_entropy(&mut self) {
+        self.anti_exfil_host_entropy = ::std::option::Option::None;
+    }
+
+    pub fn has_anti_exfil_host_entropy(&self) -> bool {
+        self.anti_exfil_host_entropy.is_some()
+    }
+
+    // Param is passed by value, moved
+    pub fn set_anti_exfil_host_entropy(&mut self, v: ::std::vec::Vec<u8>) {
+        self.anti_exfil_host_entropy = ::std::option::Option::Some(v);
+    }
+
+    // Mutable pointer to the field.
+    // If field is not initialized, it is initialized with default value first.
+    pub fn mut_anti_exfil_host_entropy(&mut self) -> &mut ::std::vec::Vec<u8> {
+        if self.anti_exfil_host_entropy.is_none() {
+            self.anti_exfil_host_entropy = ::std::option::Option::Some(::std::vec::Vec::new());
+        }
+        self.anti_exfil_host_entropy.as_mut().unwrap()
+    }
+
+    // Take field
+    pub fn take_anti_exfil_host_entropy(&mut self) -> ::std::vec::Vec<u8> {
+        self.anti_exfil_host_entropy.take().unwrap_or_else(|| ::std::vec::Vec::new())
+    }
+
+    // optional uint32 anti_exfil_sighash = 103;
+
+    pub fn anti_exfil_sighash(&self) -> u32 {
+        self.anti_exfil_sighash.unwrap_or(0)
+    }
+
+    pub fn clear_anti_exfil_sighash(&mut self) {
+        self.anti_exfil_sighash = ::std::option::Option::None;
+    }
+
+    pub fn has_anti_exfil_sighash(&self) -> bool {
+        self.anti_exfil_sighash.is_some()
+    }
+
+    // Param is passed by value, moved
+    pub fn set_anti_exfil_sighash(&mut self, v: u32) {
+        self.anti_exfil_sighash = ::std::option::Option::Some(v);
+    }
+
     fn generated_message_descriptor_data() -> ::protobuf::reflect::GeneratedMessageDescriptorData {
-        let mut fields = ::std::vec::Vec::with_capacity(17);
+        let mut fields = ::std::vec::Vec::with_capacity(21);
         let mut oneofs = ::std::vec::Vec::with_capacity(0);
         fields.push(::protobuf::reflect::rt::v2::make_vec_simpler_accessor::<_, _>(
             "address_n",
@@ -7608,6 +7996,26 @@ impl TxInput {
             "coinjoin_flags",
             |m: &TxInput| { &m.coinjoin_flags },
             |m: &mut TxInput| { &mut m.coinjoin_flags },
+        ));
+        fields.push(::protobuf::reflect::rt::v2::make_option_accessor::<_, _>(
+            "anti_exfil_host_commitment",
+            |m: &TxInput| { &m.anti_exfil_host_commitment },
+            |m: &mut TxInput| { &mut m.anti_exfil_host_commitment },
+        ));
+        fields.push(::protobuf::reflect::rt::v2::make_option_accessor::<_, _>(
+            "anti_exfil_signer_nonce",
+            |m: &TxInput| { &m.anti_exfil_signer_nonce },
+            |m: &mut TxInput| { &mut m.anti_exfil_signer_nonce },
+        ));
+        fields.push(::protobuf::reflect::rt::v2::make_option_accessor::<_, _>(
+            "anti_exfil_host_entropy",
+            |m: &TxInput| { &m.anti_exfil_host_entropy },
+            |m: &mut TxInput| { &mut m.anti_exfil_host_entropy },
+        ));
+        fields.push(::protobuf::reflect::rt::v2::make_option_accessor::<_, _>(
+            "anti_exfil_sighash",
+            |m: &TxInput| { &m.anti_exfil_sighash },
+            |m: &mut TxInput| { &mut m.anti_exfil_sighash },
         ));
         ::protobuf::reflect::GeneratedMessageDescriptorData::new_2::<TxInput>(
             "TxInput",
@@ -7695,6 +8103,18 @@ impl ::protobuf::Message for TxInput {
                 160 => {
                     self.coinjoin_flags = ::std::option::Option::Some(is.read_uint32()?);
                 },
+                802 => {
+                    self.anti_exfil_host_commitment = ::std::option::Option::Some(is.read_bytes()?);
+                },
+                810 => {
+                    self.anti_exfil_signer_nonce = ::std::option::Option::Some(is.read_bytes()?);
+                },
+                818 => {
+                    self.anti_exfil_host_entropy = ::std::option::Option::Some(is.read_bytes()?);
+                },
+                824 => {
+                    self.anti_exfil_sighash = ::std::option::Option::Some(is.read_uint32()?);
+                },
                 tag => {
                     ::protobuf::rt::read_unknown_or_skip_group(tag, is, self.special_fields.mut_unknown_fields())?;
                 },
@@ -7759,6 +8179,18 @@ impl ::protobuf::Message for TxInput {
         if let Some(v) = self.coinjoin_flags {
             my_size += ::protobuf::rt::uint32_size(20, v);
         }
+        if let Some(v) = self.anti_exfil_host_commitment.as_ref() {
+            my_size += ::protobuf::rt::bytes_size(100, &v);
+        }
+        if let Some(v) = self.anti_exfil_signer_nonce.as_ref() {
+            my_size += ::protobuf::rt::bytes_size(101, &v);
+        }
+        if let Some(v) = self.anti_exfil_host_entropy.as_ref() {
+            my_size += ::protobuf::rt::bytes_size(102, &v);
+        }
+        if let Some(v) = self.anti_exfil_sighash {
+            my_size += ::protobuf::rt::uint32_size(103, v);
+        }
         my_size += ::protobuf::rt::unknown_fields_size(self.special_fields.unknown_fields());
         self.special_fields.cached_size().set(my_size as u32);
         my_size
@@ -7816,6 +8248,18 @@ impl ::protobuf::Message for TxInput {
         if let Some(v) = self.coinjoin_flags {
             os.write_uint32(20, v)?;
         }
+        if let Some(v) = self.anti_exfil_host_commitment.as_ref() {
+            os.write_bytes(100, v)?;
+        }
+        if let Some(v) = self.anti_exfil_signer_nonce.as_ref() {
+            os.write_bytes(101, v)?;
+        }
+        if let Some(v) = self.anti_exfil_host_entropy.as_ref() {
+            os.write_bytes(102, v)?;
+        }
+        if let Some(v) = self.anti_exfil_sighash {
+            os.write_uint32(103, v)?;
+        }
         os.write_unknown_fields(self.special_fields.unknown_fields())?;
         ::std::result::Result::Ok(())
     }
@@ -7850,6 +8294,10 @@ impl ::protobuf::Message for TxInput {
         self.decred_staking_spend = ::std::option::Option::None;
         self.script_pubkey = ::std::option::Option::None;
         self.coinjoin_flags = ::std::option::Option::None;
+        self.anti_exfil_host_commitment = ::std::option::Option::None;
+        self.anti_exfil_signer_nonce = ::std::option::Option::None;
+        self.anti_exfil_host_entropy = ::std::option::Option::None;
+        self.anti_exfil_sighash = ::std::option::Option::None;
         self.special_fields.clear();
     }
 
@@ -7872,6 +8320,10 @@ impl ::protobuf::Message for TxInput {
             decred_staking_spend: ::std::option::Option::None,
             script_pubkey: ::std::option::Option::None,
             coinjoin_flags: ::std::option::Option::None,
+            anti_exfil_host_commitment: ::std::option::Option::None,
+            anti_exfil_signer_nonce: ::std::option::Option::None,
+            anti_exfil_host_entropy: ::std::option::Option::None,
+            anti_exfil_sighash: ::std::option::Option::None,
             special_fields: ::protobuf::SpecialFields::new(),
         };
         &instance
@@ -12308,7 +12760,7 @@ static file_descriptor_proto_data: &'static [u8] = b"\
     hold\x18\x02\x20\x02(\x04R\x0enoFeeThreshold\x124\n\x16min_registrable_a\
     mount\x18\x03\x20\x02(\x04R\x14minRegistrableAmount\x12&\n\x0fmask_publi\
     c_key\x18\x04\x20\x01(\x0cR\rmaskPublicKey\x12\x1c\n\tsignature\x18\x05\
-    \x20\x01(\x0cR\tsignature\"\xd4\x05\n\tTxRequest\x12T\n\x0crequest_type\
+    \x20\x01(\x0cR\tsignature\"\xfe\x05\n\tTxRequest\x12T\n\x0crequest_type\
     \x18\x01\x20\x01(\x0e21.hw.trezor.messages.bitcoin.TxRequest.RequestType\
     R\x0brequestType\x12T\n\x07details\x18\x02\x20\x01(\x0b2:.hw.trezor.mess\
     ages.bitcoin.TxRequest.TxRequestDetailsTypeR\x07details\x12]\n\nserializ\
@@ -12317,58 +12769,30 @@ static file_descriptor_proto_data: &'static [u8] = b"\
     \rrequest_index\x18\x01\x20\x01(\rR\x0crequestIndex\x12\x17\n\x07tx_hash\
     \x18\x02\x20\x01(\x0cR\x06txHash\x12$\n\x0eextra_data_len\x18\x03\x20\
     \x01(\rR\x0cextraDataLen\x12*\n\x11extra_data_offset\x18\x04\x20\x01(\rR\
-    \x0fextraDataOffset\x1a\x85\x01\n\x17TxRequestSerializedType\x12'\n\x0fs\
+    \x0fextraDataOffset\x1a\xaf\x01\n\x17TxRequestSerializedType\x12'\n\x0fs\
     ignature_index\x18\x01\x20\x01(\rR\x0esignatureIndex\x12\x1c\n\tsignatur\
     e\x18\x02\x20\x01(\x0cR\tsignature\x12#\n\rserialized_tx\x18\x03\x20\x01\
-    (\x0cR\x0cserializedTx\"\x8a\x01\n\x0bRequestType\x12\x0b\n\x07TXINPUT\
-    \x10\0\x12\x0c\n\x08TXOUTPUT\x10\x01\x12\n\n\x06TXMETA\x10\x02\x12\x0e\n\
-    \nTXFINISHED\x10\x03\x12\x0f\n\x0bTXEXTRADATA\x10\x04\x12\x0f\n\x0bTXORI\
-    GINPUT\x10\x05\x12\x10\n\x0cTXORIGOUTPUT\x10\x06\x12\x10\n\x0cTXPAYMENTR\
-    EQ\x10\x07\"\xee\x0f\n\x05TxAck\x12A\n\x02tx\x18\x01\x20\x01(\x0b21.hw.t\
-    rezor.messages.bitcoin.TxAck.TransactionTypeR\x02tx\x1a\x9d\x0f\n\x0fTra\
-    nsactionType\x12\x18\n\x07version\x18\x01\x20\x01(\rR\x07version\x12U\n\
-    \x06inputs\x18\x02\x20\x03(\x0b2=.hw.trezor.messages.bitcoin.TxAck.Trans\
-    actionType.TxInputTypeR\x06inputs\x12b\n\x0bbin_outputs\x18\x03\x20\x03(\
-    \x0b2A.hw.trezor.messages.bitcoin.TxAck.TransactionType.TxOutputBinTypeR\
-    \nbinOutputs\x12\x1b\n\tlock_time\x18\x04\x20\x01(\rR\x08lockTime\x12X\n\
-    \x07outputs\x18\x05\x20\x03(\x0b2>.hw.trezor.messages.bitcoin.TxAck.Tran\
-    sactionType.TxOutputTypeR\x07outputs\x12\x1d\n\ninputs_cnt\x18\x06\x20\
-    \x01(\rR\tinputsCnt\x12\x1f\n\x0boutputs_cnt\x18\x07\x20\x01(\rR\noutput\
-    sCnt\x12\x1d\n\nextra_data\x18\x08\x20\x01(\x0cR\textraData\x12$\n\x0eex\
-    tra_data_len\x18\t\x20\x01(\rR\x0cextraDataLen\x12\x16\n\x06expiry\x18\n\
-    \x20\x01(\rR\x06expiry\x12&\n\x0coverwintered\x18\x0b\x20\x01(\x08R\x0co\
-    verwinteredB\x02\x18\x01\x12(\n\x10version_group_id\x18\x0c\x20\x01(\rR\
-    \x0eversionGroupId\x12\x1c\n\ttimestamp\x18\r\x20\x01(\rR\ttimestamp\x12\
-    \x1b\n\tbranch_id\x18\x0e\x20\x01(\rR\x08branchId\x1a\xf1\x05\n\x0bTxInp\
-    utType\x12\x1b\n\taddress_n\x18\x01\x20\x03(\rR\x08addressN\x12\x1b\n\tp\
-    rev_hash\x18\x02\x20\x02(\x0cR\x08prevHash\x12\x1d\n\nprev_index\x18\x03\
-    \x20\x02(\rR\tprevIndex\x12\x1d\n\nscript_sig\x18\x04\x20\x01(\x0cR\tscr\
-    iptSig\x12&\n\x08sequence\x18\x05\x20\x01(\r:\n4294967295R\x08sequence\
-    \x12Z\n\x0bscript_type\x18\x06\x20\x01(\x0e2+.hw.trezor.messages.bitcoin\
-    .InputScriptType:\x0cSPENDADDRESSR\nscriptType\x12P\n\x08multisig\x18\
-    \x07\x20\x01(\x0b24.hw.trezor.messages.bitcoin.MultisigRedeemScriptTypeR\
-    \x08multisig\x12\x16\n\x06amount\x18\x08\x20\x01(\x04R\x06amount\x12\x1f\
-    \n\x0bdecred_tree\x18\t\x20\x01(\rR\ndecredTree\x12\x18\n\x07witness\x18\
-    \r\x20\x01(\x0cR\x07witness\x12'\n\x0fownership_proof\x18\x0e\x20\x01(\
-    \x0cR\x0eownershipProof\x12'\n\x0fcommitment_data\x18\x0f\x20\x01(\x0cR\
-    \x0ecommitmentData\x12\x1b\n\torig_hash\x18\x10\x20\x01(\x0cR\x08origHas\
-    h\x12\x1d\n\norig_index\x18\x11\x20\x01(\rR\torigIndex\x12d\n\x14decred_\
-    staking_spend\x18\x12\x20\x01(\x0e22.hw.trezor.messages.bitcoin.DecredSt\
-    akingSpendTypeR\x12decredStakingSpend\x12#\n\rscript_pubkey\x18\x13\x20\
-    \x01(\x0cR\x0cscriptPubkey\x12(\n\x0ecoinjoin_flags\x18\x14\x20\x01(\r:\
-    \x010R\rcoinjoinFlags\x1a\x82\x01\n\x0fTxOutputBinType\x12\x16\n\x06amou\
-    nt\x18\x01\x20\x02(\x04R\x06amount\x12#\n\rscript_pubkey\x18\x02\x20\x02\
-    (\x0cR\x0cscriptPubkey\x122\n\x15decred_script_version\x18\x03\x20\x01(\
-    \rR\x13decredScriptVersion\x1a\x9a\x03\n\x0cTxOutputType\x12\x18\n\x07ad\
-    dress\x18\x01\x20\x01(\tR\x07address\x12\x1b\n\taddress_n\x18\x02\x20\
-    \x03(\rR\x08addressN\x12\x16\n\x06amount\x18\x03\x20\x02(\x04R\x06amount\
-    \x12[\n\x0bscript_type\x18\x04\x20\x01(\x0e2,.hw.trezor.messages.bitcoin\
-    .OutputScriptType:\x0cPAYTOADDRESSR\nscriptType\x12P\n\x08multisig\x18\
-    \x05\x20\x01(\x0b24.hw.trezor.messages.bitcoin.MultisigRedeemScriptTypeR\
-    \x08multisig\x12$\n\x0eop_return_data\x18\x06\x20\x01(\x0cR\x0copReturnD\
-    ata\x12\x1b\n\torig_hash\x18\n\x20\x01(\x0cR\x08origHash\x12\x1d\n\norig\
-    _index\x18\x0b\x20\x01(\rR\torigIndex\x12*\n\x11payment_req_index\x18\
-    \x0c\x20\x01(\rR\x0fpaymentReqIndex:\x02\x18\x01\"\xff\x05\n\x07TxInput\
+    (\x0cR\x0cserializedTx\x12(\n\x10anti_exfil_nonce\x18\x04\x20\x01(\x0cR\
+    \x0eantiExfilNonce\"\x8a\x01\n\x0bRequestType\x12\x0b\n\x07TXINPUT\x10\0\
+    \x12\x0c\n\x08TXOUTPUT\x10\x01\x12\n\n\x06TXMETA\x10\x02\x12\x0e\n\nTXFI\
+    NISHED\x10\x03\x12\x0f\n\x0bTXEXTRADATA\x10\x04\x12\x0f\n\x0bTXORIGINPUT\
+    \x10\x05\x12\x10\n\x0cTXORIGOUTPUT\x10\x06\x12\x10\n\x0cTXPAYMENTREQ\x10\
+    \x07\"\xc7\x11\n\x05TxAck\x12A\n\x02tx\x18\x01\x20\x01(\x0b21.hw.trezor.\
+    messages.bitcoin.TxAck.TransactionTypeR\x02tx\x1a\xf6\x10\n\x0fTransacti\
+    onType\x12\x18\n\x07version\x18\x01\x20\x01(\rR\x07version\x12U\n\x06inp\
+    uts\x18\x02\x20\x03(\x0b2=.hw.trezor.messages.bitcoin.TxAck.TransactionT\
+    ype.TxInputTypeR\x06inputs\x12b\n\x0bbin_outputs\x18\x03\x20\x03(\x0b2A.\
+    hw.trezor.messages.bitcoin.TxAck.TransactionType.TxOutputBinTypeR\nbinOu\
+    tputs\x12\x1b\n\tlock_time\x18\x04\x20\x01(\rR\x08lockTime\x12X\n\x07out\
+    puts\x18\x05\x20\x03(\x0b2>.hw.trezor.messages.bitcoin.TxAck.Transaction\
+    Type.TxOutputTypeR\x07outputs\x12\x1d\n\ninputs_cnt\x18\x06\x20\x01(\rR\
+    \tinputsCnt\x12\x1f\n\x0boutputs_cnt\x18\x07\x20\x01(\rR\noutputsCnt\x12\
+    \x1d\n\nextra_data\x18\x08\x20\x01(\x0cR\textraData\x12$\n\x0eextra_data\
+    _len\x18\t\x20\x01(\rR\x0cextraDataLen\x12\x16\n\x06expiry\x18\n\x20\x01\
+    (\rR\x06expiry\x12&\n\x0coverwintered\x18\x0b\x20\x01(\x08R\x0coverwinte\
+    redB\x02\x18\x01\x12(\n\x10version_group_id\x18\x0c\x20\x01(\rR\x0eversi\
+    onGroupId\x12\x1c\n\ttimestamp\x18\r\x20\x01(\rR\ttimestamp\x12\x1b\n\tb\
+    ranch_id\x18\x0e\x20\x01(\rR\x08branchId\x1a\xca\x07\n\x0bTxInputType\
     \x12\x1b\n\taddress_n\x18\x01\x20\x03(\rR\x08addressN\x12\x1b\n\tprev_ha\
     sh\x18\x02\x20\x02(\x0cR\x08prevHash\x12\x1d\n\nprev_index\x18\x03\x20\
     \x02(\rR\tprevIndex\x12\x1d\n\nscript_sig\x18\x04\x20\x01(\x0cR\tscriptS\
@@ -12376,7 +12800,7 @@ static file_descriptor_proto_data: &'static [u8] = b"\
     \n\x0bscript_type\x18\x06\x20\x01(\x0e2+.hw.trezor.messages.bitcoin.Inpu\
     tScriptType:\x0cSPENDADDRESSR\nscriptType\x12P\n\x08multisig\x18\x07\x20\
     \x01(\x0b24.hw.trezor.messages.bitcoin.MultisigRedeemScriptTypeR\x08mult\
-    isig\x12\x16\n\x06amount\x18\x08\x20\x02(\x04R\x06amount\x12\x1f\n\x0bde\
+    isig\x12\x16\n\x06amount\x18\x08\x20\x01(\x04R\x06amount\x12\x1f\n\x0bde\
     cred_tree\x18\t\x20\x01(\rR\ndecredTree\x12\x18\n\x07witness\x18\r\x20\
     \x01(\x0cR\x07witness\x12'\n\x0fownership_proof\x18\x0e\x20\x01(\x0cR\
     \x0eownershipProof\x12'\n\x0fcommitment_data\x18\x0f\x20\x01(\x0cR\x0eco\
@@ -12385,89 +12809,127 @@ static file_descriptor_proto_data: &'static [u8] = b"\
     ng_spend\x18\x12\x20\x01(\x0e22.hw.trezor.messages.bitcoin.DecredStaking\
     SpendTypeR\x12decredStakingSpend\x12#\n\rscript_pubkey\x18\x13\x20\x01(\
     \x0cR\x0cscriptPubkey\x12(\n\x0ecoinjoin_flags\x18\x14\x20\x01(\r:\x010R\
-    \rcoinjoinFlagsJ\x04\x08\n\x10\x0bJ\x04\x08\x0b\x10\x0cJ\x04\x08\x0c\x10\
-    \r\"\xa8\x03\n\x08TxOutput\x12\x18\n\x07address\x18\x01\x20\x01(\tR\x07a\
-    ddress\x12\x1b\n\taddress_n\x18\x02\x20\x03(\rR\x08addressN\x12\x16\n\
-    \x06amount\x18\x03\x20\x02(\x04R\x06amount\x12[\n\x0bscript_type\x18\x04\
-    \x20\x01(\x0e2,.hw.trezor.messages.bitcoin.OutputScriptType:\x0cPAYTOADD\
-    RESSR\nscriptType\x12P\n\x08multisig\x18\x05\x20\x01(\x0b24.hw.trezor.me\
-    ssages.bitcoin.MultisigRedeemScriptTypeR\x08multisig\x12$\n\x0eop_return\
-    _data\x18\x06\x20\x01(\x0cR\x0copReturnData\x12\x1b\n\torig_hash\x18\n\
-    \x20\x01(\x0cR\x08origHash\x12\x1d\n\norig_index\x18\x0b\x20\x01(\rR\tor\
-    igIndex\x12*\n\x11payment_req_index\x18\x0c\x20\x01(\rR\x0fpaymentReqInd\
-    exJ\x04\x08\x07\x10\x08J\x04\x08\x08\x10\tJ\x04\x08\t\x10\n\"\xcb\x02\n\
-    \x06PrevTx\x12\x18\n\x07version\x18\x01\x20\x02(\rR\x07version\x12\x1b\n\
-    \tlock_time\x18\x04\x20\x02(\rR\x08lockTime\x12!\n\x0cinputs_count\x18\
-    \x06\x20\x02(\rR\x0binputsCount\x12#\n\routputs_count\x18\x07\x20\x02(\r\
-    R\x0coutputsCount\x12'\n\x0eextra_data_len\x18\t\x20\x01(\r:\x010R\x0cex\
-    traDataLen\x12\x16\n\x06expiry\x18\n\x20\x01(\rR\x06expiry\x12(\n\x10ver\
-    sion_group_id\x18\x0c\x20\x01(\rR\x0eversionGroupId\x12\x1c\n\ttimestamp\
-    \x18\r\x20\x01(\rR\ttimestamp\x12\x1b\n\tbranch_id\x18\x0e\x20\x01(\rR\
-    \x08branchIdJ\x04\x08\x02\x10\x03J\x04\x08\x03\x10\x04J\x04\x08\x05\x10\
-    \x06J\x04\x08\x08\x10\tJ\x04\x08\x0b\x10\x0c\"\xf7\x01\n\tPrevInput\x12\
-    \x1b\n\tprev_hash\x18\x02\x20\x02(\x0cR\x08prevHash\x12\x1d\n\nprev_inde\
-    x\x18\x03\x20\x02(\rR\tprevIndex\x12\x1d\n\nscript_sig\x18\x04\x20\x02(\
-    \x0cR\tscriptSig\x12\x1a\n\x08sequence\x18\x05\x20\x02(\rR\x08sequence\
-    \x12\x1f\n\x0bdecred_tree\x18\t\x20\x01(\rR\ndecredTreeJ\x04\x08\x01\x10\
-    \x02J\x04\x08\x06\x10\x07J\x04\x08\x07\x10\x08J\x04\x08\x08\x10\tJ\x04\
-    \x08\n\x10\x0bJ\x04\x08\x0b\x10\x0cJ\x04\x08\x0c\x10\rJ\x04\x08\r\x10\
-    \x0eJ\x04\x08\x0e\x10\x0fJ\x04\x08\x0f\x10\x10J\x04\x08\x10\x10\x11J\x04\
-    \x08\x11\x10\x12J\x04\x08\x12\x10\x13J\x04\x08\x13\x10\x14\"}\n\nPrevOut\
-    put\x12\x16\n\x06amount\x18\x01\x20\x02(\x04R\x06amount\x12#\n\rscript_p\
-    ubkey\x18\x02\x20\x02(\x0cR\x0cscriptPubkey\x122\n\x15decred_script_vers\
-    ion\x18\x03\x20\x01(\rR\x13decredScriptVersion\"\xac\x01\n\nTxAckInput\
-    \x12H\n\x02tx\x18\x01\x20\x02(\x0b28.hw.trezor.messages.bitcoin.TxAckInp\
-    ut.TxAckInputWrapperR\x02tx\x1aN\n\x11TxAckInputWrapper\x129\n\x05input\
-    \x18\x02\x20\x02(\x0b2#.hw.trezor.messages.bitcoin.TxInputR\x05input:\
-    \x04\x90\xb2\x19\x16\"\xb3\x01\n\x0bTxAckOutput\x12J\n\x02tx\x18\x01\x20\
-    \x02(\x0b2:.hw.trezor.messages.bitcoin.TxAckOutput.TxAckOutputWrapperR\
-    \x02tx\x1aR\n\x12TxAckOutputWrapper\x12<\n\x06output\x18\x05\x20\x02(\
-    \x0b2$.hw.trezor.messages.bitcoin.TxOutputR\x06output:\x04\x90\xb2\x19\
-    \x16\"I\n\rTxAckPrevMeta\x122\n\x02tx\x18\x01\x20\x02(\x0b2\".hw.trezor.\
-    messages.bitcoin.PrevTxR\x02tx:\x04\x90\xb2\x19\x16\"\xbe\x01\n\x0eTxAck\
-    PrevInput\x12P\n\x02tx\x18\x01\x20\x02(\x0b2@.hw.trezor.messages.bitcoin\
-    .TxAckPrevInput.TxAckPrevInputWrapperR\x02tx\x1aT\n\x15TxAckPrevInputWra\
-    pper\x12;\n\x05input\x18\x02\x20\x02(\x0b2%.hw.trezor.messages.bitcoin.P\
-    revInputR\x05input:\x04\x90\xb2\x19\x16\"\xc5\x01\n\x0fTxAckPrevOutput\
-    \x12R\n\x02tx\x18\x01\x20\x02(\x0b2B.hw.trezor.messages.bitcoin.TxAckPre\
-    vOutput.TxAckPrevOutputWrapperR\x02tx\x1aX\n\x16TxAckPrevOutputWrapper\
-    \x12>\n\x06output\x18\x03\x20\x02(\x0b2&.hw.trezor.messages.bitcoin.Prev\
-    OutputR\x06output:\x04\x90\xb2\x19\x16\"\xbb\x01\n\x12TxAckPrevExtraData\
-    \x12X\n\x02tx\x18\x01\x20\x02(\x0b2H.hw.trezor.messages.bitcoin.TxAckPre\
-    vExtraData.TxAckPrevExtraDataWrapperR\x02tx\x1aE\n\x19TxAckPrevExtraData\
-    Wrapper\x12(\n\x10extra_data_chunk\x18\x08\x20\x02(\x0cR\x0eextraDataChu\
-    nk:\x04\x90\xb2\x19\x16\"\x88\x03\n\x11GetOwnershipProof\x12\x1b\n\taddr\
-    ess_n\x18\x01\x20\x03(\rR\x08addressN\x12$\n\tcoin_name\x18\x02\x20\x01(\
-    \t:\x07BitcoinR\x08coinName\x12Z\n\x0bscript_type\x18\x03\x20\x01(\x0e2+\
-    .hw.trezor.messages.bitcoin.InputScriptType:\x0cSPENDWITNESSR\nscriptTyp\
-    e\x12P\n\x08multisig\x18\x04\x20\x01(\x0b24.hw.trezor.messages.bitcoin.M\
-    ultisigRedeemScriptTypeR\x08multisig\x122\n\x11user_confirmation\x18\x05\
-    \x20\x01(\x08:\x05falseR\x10userConfirmation\x12#\n\rownership_ids\x18\
-    \x06\x20\x03(\x0cR\x0cownershipIds\x12)\n\x0fcommitment_data\x18\x07\x20\
-    \x01(\x0c:\0R\x0ecommitmentData\"W\n\x0eOwnershipProof\x12'\n\x0fownersh\
-    ip_proof\x18\x01\x20\x02(\x0cR\x0eownershipProof\x12\x1c\n\tsignature\
-    \x18\x02\x20\x02(\x0cR\tsignature\"\xab\x03\n\x11AuthorizeCoinJoin\x12\
-    \x20\n\x0bcoordinator\x18\x01\x20\x02(\tR\x0bcoordinator\x12\x1d\n\nmax_\
-    rounds\x18\x02\x20\x02(\x04R\tmaxRounds\x127\n\x18max_coordinator_fee_ra\
-    te\x18\x03\x20\x02(\rR\x15maxCoordinatorFeeRate\x12+\n\x12max_fee_per_kv\
-    byte\x18\x04\x20\x02(\rR\x0fmaxFeePerKvbyte\x12\x1b\n\taddress_n\x18\x05\
-    \x20\x03(\rR\x08addressN\x12$\n\tcoin_name\x18\x06\x20\x01(\t:\x07Bitcoi\
-    nR\x08coinName\x12Z\n\x0bscript_type\x18\x07\x20\x01(\x0e2+.hw.trezor.me\
-    ssages.bitcoin.InputScriptType:\x0cSPENDADDRESSR\nscriptType\x12P\n\x0ba\
-    mount_unit\x18\x08\x20\x01(\x0e2&.hw.trezor.messages.bitcoin.AmountUnit:\
-    \x07BITCOINR\namountUnit*~\n\x0fInputScriptType\x12\x10\n\x0cSPENDADDRES\
-    S\x10\0\x12\x11\n\rSPENDMULTISIG\x10\x01\x12\x0c\n\x08EXTERNAL\x10\x02\
-    \x12\x10\n\x0cSPENDWITNESS\x10\x03\x12\x14\n\x10SPENDP2SHWITNESS\x10\x04\
-    \x12\x10\n\x0cSPENDTAPROOT\x10\x05*\x99\x01\n\x10OutputScriptType\x12\
-    \x10\n\x0cPAYTOADDRESS\x10\0\x12\x13\n\x0fPAYTOSCRIPTHASH\x10\x01\x12\
-    \x11\n\rPAYTOMULTISIG\x10\x02\x12\x11\n\rPAYTOOPRETURN\x10\x03\x12\x10\n\
-    \x0cPAYTOWITNESS\x10\x04\x12\x14\n\x10PAYTOP2SHWITNESS\x10\x05\x12\x10\n\
-    \x0cPAYTOTAPROOT\x10\x06*.\n\x16DecredStakingSpendType\x12\t\n\x05SSGen\
-    \x10\0\x12\t\n\x05SSRTX\x10\x01*J\n\nAmountUnit\x12\x0b\n\x07BITCOIN\x10\
-    \0\x12\x10\n\x0cMILLIBITCOIN\x10\x01\x12\x10\n\x0cMICROBITCOIN\x10\x02\
-    \x12\x0b\n\x07SATOSHI\x10\x03*8\n\x14MultisigPubkeysOrder\x12\r\n\tPRESE\
-    RVED\x10\0\x12\x11\n\rLEXICOGRAPHIC\x10\x01B?\n#com.satoshilabs.trezor.l\
-    ib.protobufB\x14TrezorMessageBitcoin\x80\xa6\x1d\x01\
+    \rcoinjoinFlags\x12;\n\x1aanti_exfil_host_commitment\x18d\x20\x01(\x0cR\
+    \x17antiExfilHostCommitment\x125\n\x17anti_exfil_signer_nonce\x18e\x20\
+    \x01(\x0cR\x14antiExfilSignerNonce\x125\n\x17anti_exfil_host_entropy\x18\
+    f\x20\x01(\x0cR\x14antiExfilHostEntropy\x12,\n\x12anti_exfil_sighash\x18\
+    g\x20\x01(\rR\x10antiExfilSighash\x1a\x82\x01\n\x0fTxOutputBinType\x12\
+    \x16\n\x06amount\x18\x01\x20\x02(\x04R\x06amount\x12#\n\rscript_pubkey\
+    \x18\x02\x20\x02(\x0cR\x0cscriptPubkey\x122\n\x15decred_script_version\
+    \x18\x03\x20\x01(\rR\x13decredScriptVersion\x1a\x9a\x03\n\x0cTxOutputTyp\
+    e\x12\x18\n\x07address\x18\x01\x20\x01(\tR\x07address\x12\x1b\n\taddress\
+    _n\x18\x02\x20\x03(\rR\x08addressN\x12\x16\n\x06amount\x18\x03\x20\x02(\
+    \x04R\x06amount\x12[\n\x0bscript_type\x18\x04\x20\x01(\x0e2,.hw.trezor.m\
+    essages.bitcoin.OutputScriptType:\x0cPAYTOADDRESSR\nscriptType\x12P\n\
+    \x08multisig\x18\x05\x20\x01(\x0b24.hw.trezor.messages.bitcoin.MultisigR\
+    edeemScriptTypeR\x08multisig\x12$\n\x0eop_return_data\x18\x06\x20\x01(\
+    \x0cR\x0copReturnData\x12\x1b\n\torig_hash\x18\n\x20\x01(\x0cR\x08origHa\
+    sh\x12\x1d\n\norig_index\x18\x0b\x20\x01(\rR\torigIndex\x12*\n\x11paymen\
+    t_req_index\x18\x0c\x20\x01(\rR\x0fpaymentReqIndex:\x02\x18\x01\"\xd8\
+    \x07\n\x07TxInput\x12\x1b\n\taddress_n\x18\x01\x20\x03(\rR\x08addressN\
+    \x12\x1b\n\tprev_hash\x18\x02\x20\x02(\x0cR\x08prevHash\x12\x1d\n\nprev_\
+    index\x18\x03\x20\x02(\rR\tprevIndex\x12\x1d\n\nscript_sig\x18\x04\x20\
+    \x01(\x0cR\tscriptSig\x12&\n\x08sequence\x18\x05\x20\x01(\r:\n4294967295\
+    R\x08sequence\x12Z\n\x0bscript_type\x18\x06\x20\x01(\x0e2+.hw.trezor.mes\
+    sages.bitcoin.InputScriptType:\x0cSPENDADDRESSR\nscriptType\x12P\n\x08mu\
+    ltisig\x18\x07\x20\x01(\x0b24.hw.trezor.messages.bitcoin.MultisigRedeemS\
+    criptTypeR\x08multisig\x12\x16\n\x06amount\x18\x08\x20\x02(\x04R\x06amou\
+    nt\x12\x1f\n\x0bdecred_tree\x18\t\x20\x01(\rR\ndecredTree\x12\x18\n\x07w\
+    itness\x18\r\x20\x01(\x0cR\x07witness\x12'\n\x0fownership_proof\x18\x0e\
+    \x20\x01(\x0cR\x0eownershipProof\x12'\n\x0fcommitment_data\x18\x0f\x20\
+    \x01(\x0cR\x0ecommitmentData\x12\x1b\n\torig_hash\x18\x10\x20\x01(\x0cR\
+    \x08origHash\x12\x1d\n\norig_index\x18\x11\x20\x01(\rR\torigIndex\x12d\n\
+    \x14decred_staking_spend\x18\x12\x20\x01(\x0e22.hw.trezor.messages.bitco\
+    in.DecredStakingSpendTypeR\x12decredStakingSpend\x12#\n\rscript_pubkey\
+    \x18\x13\x20\x01(\x0cR\x0cscriptPubkey\x12(\n\x0ecoinjoin_flags\x18\x14\
+    \x20\x01(\r:\x010R\rcoinjoinFlags\x12;\n\x1aanti_exfil_host_commitment\
+    \x18d\x20\x01(\x0cR\x17antiExfilHostCommitment\x125\n\x17anti_exfil_sign\
+    er_nonce\x18e\x20\x01(\x0cR\x14antiExfilSignerNonce\x125\n\x17anti_exfil\
+    _host_entropy\x18f\x20\x01(\x0cR\x14antiExfilHostEntropy\x12,\n\x12anti_\
+    exfil_sighash\x18g\x20\x01(\rR\x10antiExfilSighashJ\x04\x08\n\x10\x0bJ\
+    \x04\x08\x0b\x10\x0cJ\x04\x08\x0c\x10\r\"\xa8\x03\n\x08TxOutput\x12\x18\
+    \n\x07address\x18\x01\x20\x01(\tR\x07address\x12\x1b\n\taddress_n\x18\
+    \x02\x20\x03(\rR\x08addressN\x12\x16\n\x06amount\x18\x03\x20\x02(\x04R\
+    \x06amount\x12[\n\x0bscript_type\x18\x04\x20\x01(\x0e2,.hw.trezor.messag\
+    es.bitcoin.OutputScriptType:\x0cPAYTOADDRESSR\nscriptType\x12P\n\x08mult\
+    isig\x18\x05\x20\x01(\x0b24.hw.trezor.messages.bitcoin.MultisigRedeemScr\
+    iptTypeR\x08multisig\x12$\n\x0eop_return_data\x18\x06\x20\x01(\x0cR\x0co\
+    pReturnData\x12\x1b\n\torig_hash\x18\n\x20\x01(\x0cR\x08origHash\x12\x1d\
+    \n\norig_index\x18\x0b\x20\x01(\rR\torigIndex\x12*\n\x11payment_req_inde\
+    x\x18\x0c\x20\x01(\rR\x0fpaymentReqIndexJ\x04\x08\x07\x10\x08J\x04\x08\
+    \x08\x10\tJ\x04\x08\t\x10\n\"\xcb\x02\n\x06PrevTx\x12\x18\n\x07version\
+    \x18\x01\x20\x02(\rR\x07version\x12\x1b\n\tlock_time\x18\x04\x20\x02(\rR\
+    \x08lockTime\x12!\n\x0cinputs_count\x18\x06\x20\x02(\rR\x0binputsCount\
+    \x12#\n\routputs_count\x18\x07\x20\x02(\rR\x0coutputsCount\x12'\n\x0eext\
+    ra_data_len\x18\t\x20\x01(\r:\x010R\x0cextraDataLen\x12\x16\n\x06expiry\
+    \x18\n\x20\x01(\rR\x06expiry\x12(\n\x10version_group_id\x18\x0c\x20\x01(\
+    \rR\x0eversionGroupId\x12\x1c\n\ttimestamp\x18\r\x20\x01(\rR\ttimestamp\
+    \x12\x1b\n\tbranch_id\x18\x0e\x20\x01(\rR\x08branchIdJ\x04\x08\x02\x10\
+    \x03J\x04\x08\x03\x10\x04J\x04\x08\x05\x10\x06J\x04\x08\x08\x10\tJ\x04\
+    \x08\x0b\x10\x0c\"\xf7\x01\n\tPrevInput\x12\x1b\n\tprev_hash\x18\x02\x20\
+    \x02(\x0cR\x08prevHash\x12\x1d\n\nprev_index\x18\x03\x20\x02(\rR\tprevIn\
+    dex\x12\x1d\n\nscript_sig\x18\x04\x20\x02(\x0cR\tscriptSig\x12\x1a\n\x08\
+    sequence\x18\x05\x20\x02(\rR\x08sequence\x12\x1f\n\x0bdecred_tree\x18\t\
+    \x20\x01(\rR\ndecredTreeJ\x04\x08\x01\x10\x02J\x04\x08\x06\x10\x07J\x04\
+    \x08\x07\x10\x08J\x04\x08\x08\x10\tJ\x04\x08\n\x10\x0bJ\x04\x08\x0b\x10\
+    \x0cJ\x04\x08\x0c\x10\rJ\x04\x08\r\x10\x0eJ\x04\x08\x0e\x10\x0fJ\x04\x08\
+    \x0f\x10\x10J\x04\x08\x10\x10\x11J\x04\x08\x11\x10\x12J\x04\x08\x12\x10\
+    \x13J\x04\x08\x13\x10\x14\"}\n\nPrevOutput\x12\x16\n\x06amount\x18\x01\
+    \x20\x02(\x04R\x06amount\x12#\n\rscript_pubkey\x18\x02\x20\x02(\x0cR\x0c\
+    scriptPubkey\x122\n\x15decred_script_version\x18\x03\x20\x01(\rR\x13decr\
+    edScriptVersion\"\xac\x01\n\nTxAckInput\x12H\n\x02tx\x18\x01\x20\x02(\
+    \x0b28.hw.trezor.messages.bitcoin.TxAckInput.TxAckInputWrapperR\x02tx\
+    \x1aN\n\x11TxAckInputWrapper\x129\n\x05input\x18\x02\x20\x02(\x0b2#.hw.t\
+    rezor.messages.bitcoin.TxInputR\x05input:\x04\x90\xb2\x19\x16\"\xb3\x01\
+    \n\x0bTxAckOutput\x12J\n\x02tx\x18\x01\x20\x02(\x0b2:.hw.trezor.messages\
+    .bitcoin.TxAckOutput.TxAckOutputWrapperR\x02tx\x1aR\n\x12TxAckOutputWrap\
+    per\x12<\n\x06output\x18\x05\x20\x02(\x0b2$.hw.trezor.messages.bitcoin.T\
+    xOutputR\x06output:\x04\x90\xb2\x19\x16\"I\n\rTxAckPrevMeta\x122\n\x02tx\
+    \x18\x01\x20\x02(\x0b2\".hw.trezor.messages.bitcoin.PrevTxR\x02tx:\x04\
+    \x90\xb2\x19\x16\"\xbe\x01\n\x0eTxAckPrevInput\x12P\n\x02tx\x18\x01\x20\
+    \x02(\x0b2@.hw.trezor.messages.bitcoin.TxAckPrevInput.TxAckPrevInputWrap\
+    perR\x02tx\x1aT\n\x15TxAckPrevInputWrapper\x12;\n\x05input\x18\x02\x20\
+    \x02(\x0b2%.hw.trezor.messages.bitcoin.PrevInputR\x05input:\x04\x90\xb2\
+    \x19\x16\"\xc5\x01\n\x0fTxAckPrevOutput\x12R\n\x02tx\x18\x01\x20\x02(\
+    \x0b2B.hw.trezor.messages.bitcoin.TxAckPrevOutput.TxAckPrevOutputWrapper\
+    R\x02tx\x1aX\n\x16TxAckPrevOutputWrapper\x12>\n\x06output\x18\x03\x20\
+    \x02(\x0b2&.hw.trezor.messages.bitcoin.PrevOutputR\x06output:\x04\x90\
+    \xb2\x19\x16\"\xbb\x01\n\x12TxAckPrevExtraData\x12X\n\x02tx\x18\x01\x20\
+    \x02(\x0b2H.hw.trezor.messages.bitcoin.TxAckPrevExtraData.TxAckPrevExtra\
+    DataWrapperR\x02tx\x1aE\n\x19TxAckPrevExtraDataWrapper\x12(\n\x10extra_d\
+    ata_chunk\x18\x08\x20\x02(\x0cR\x0eextraDataChunk:\x04\x90\xb2\x19\x16\"\
+    \x88\x03\n\x11GetOwnershipProof\x12\x1b\n\taddress_n\x18\x01\x20\x03(\rR\
+    \x08addressN\x12$\n\tcoin_name\x18\x02\x20\x01(\t:\x07BitcoinR\x08coinNa\
+    me\x12Z\n\x0bscript_type\x18\x03\x20\x01(\x0e2+.hw.trezor.messages.bitco\
+    in.InputScriptType:\x0cSPENDWITNESSR\nscriptType\x12P\n\x08multisig\x18\
+    \x04\x20\x01(\x0b24.hw.trezor.messages.bitcoin.MultisigRedeemScriptTypeR\
+    \x08multisig\x122\n\x11user_confirmation\x18\x05\x20\x01(\x08:\x05falseR\
+    \x10userConfirmation\x12#\n\rownership_ids\x18\x06\x20\x03(\x0cR\x0cowne\
+    rshipIds\x12)\n\x0fcommitment_data\x18\x07\x20\x01(\x0c:\0R\x0ecommitmen\
+    tData\"W\n\x0eOwnershipProof\x12'\n\x0fownership_proof\x18\x01\x20\x02(\
+    \x0cR\x0eownershipProof\x12\x1c\n\tsignature\x18\x02\x20\x02(\x0cR\tsign\
+    ature\"\xab\x03\n\x11AuthorizeCoinJoin\x12\x20\n\x0bcoordinator\x18\x01\
+    \x20\x02(\tR\x0bcoordinator\x12\x1d\n\nmax_rounds\x18\x02\x20\x02(\x04R\
+    \tmaxRounds\x127\n\x18max_coordinator_fee_rate\x18\x03\x20\x02(\rR\x15ma\
+    xCoordinatorFeeRate\x12+\n\x12max_fee_per_kvbyte\x18\x04\x20\x02(\rR\x0f\
+    maxFeePerKvbyte\x12\x1b\n\taddress_n\x18\x05\x20\x03(\rR\x08addressN\x12\
+    $\n\tcoin_name\x18\x06\x20\x01(\t:\x07BitcoinR\x08coinName\x12Z\n\x0bscr\
+    ipt_type\x18\x07\x20\x01(\x0e2+.hw.trezor.messages.bitcoin.InputScriptTy\
+    pe:\x0cSPENDADDRESSR\nscriptType\x12P\n\x0bamount_unit\x18\x08\x20\x01(\
+    \x0e2&.hw.trezor.messages.bitcoin.AmountUnit:\x07BITCOINR\namountUnit*~\
+    \n\x0fInputScriptType\x12\x10\n\x0cSPENDADDRESS\x10\0\x12\x11\n\rSPENDMU\
+    LTISIG\x10\x01\x12\x0c\n\x08EXTERNAL\x10\x02\x12\x10\n\x0cSPENDWITNESS\
+    \x10\x03\x12\x14\n\x10SPENDP2SHWITNESS\x10\x04\x12\x10\n\x0cSPENDTAPROOT\
+    \x10\x05*\x99\x01\n\x10OutputScriptType\x12\x10\n\x0cPAYTOADDRESS\x10\0\
+    \x12\x13\n\x0fPAYTOSCRIPTHASH\x10\x01\x12\x11\n\rPAYTOMULTISIG\x10\x02\
+    \x12\x11\n\rPAYTOOPRETURN\x10\x03\x12\x10\n\x0cPAYTOWITNESS\x10\x04\x12\
+    \x14\n\x10PAYTOP2SHWITNESS\x10\x05\x12\x10\n\x0cPAYTOTAPROOT\x10\x06*.\n\
+    \x16DecredStakingSpendType\x12\t\n\x05SSGen\x10\0\x12\t\n\x05SSRTX\x10\
+    \x01*J\n\nAmountUnit\x12\x0b\n\x07BITCOIN\x10\0\x12\x10\n\x0cMILLIBITCOI\
+    N\x10\x01\x12\x10\n\x0cMICROBITCOIN\x10\x02\x12\x0b\n\x07SATOSHI\x10\x03\
+    *8\n\x14MultisigPubkeysOrder\x12\r\n\tPRESERVED\x10\0\x12\x11\n\rLEXICOG\
+    RAPHIC\x10\x01B?\n#com.satoshilabs.trezor.lib.protobufB\x14TrezorMessage\
+    Bitcoin\x80\xa6\x1d\x01\
 ";
 
 /// `FileDescriptorProto` object which was a source for this generated file

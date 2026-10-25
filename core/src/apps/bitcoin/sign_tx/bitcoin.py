@@ -663,6 +663,19 @@ class Bitcoin:
         )
 
         node = self.keychain.derive(txi.address_n)
+        if txi.anti_exfil_host_commitment is not None:
+            from trezor.crypto.curve import bip340
+
+            if self.serialize:
+                raise ProcessError("Anti-exfil requires serialize=False")
+            output_key = bip340.tweak_secret_key(node.private_key())
+            return bip340.anti_exfil(
+                output_key,
+                sigmsg_digest,
+                txi.anti_exfil_host_commitment,
+                txi.anti_exfil_signer_nonce,
+                txi.anti_exfil_host_entropy,
+            )
         return bip340_sign(node, sigmsg_digest)
 
     async def sign_segwit_input(self, i: int) -> None:
@@ -702,7 +715,17 @@ class Bitcoin:
                         self.get_sighash_type(txi),
                     )
 
-        self.set_serialized_signature(i, signature)
+        if (
+            txi.anti_exfil_host_commitment is not None
+            and txi.anti_exfil_host_entropy is None
+        ):
+            serialized = self.tx_req.serialized
+            assert serialized is not None
+            ensure(serialized.signature is None and serialized.anti_exfil_nonce is None)
+            serialized.signature_index = i
+            serialized.anti_exfil_nonce = signature
+        else:
+            self.set_serialized_signature(i, signature)
 
     async def get_legacy_tx_digest(
         self,
@@ -866,6 +889,8 @@ class Bitcoin:
     def get_hash_type(self, txi: TxInput) -> int:
         # The nHashType in BIP 143.
         if common.input_is_taproot(txi):
+            if txi.anti_exfil_host_commitment is not None:
+                return txi.anti_exfil_sighash or 0
             return SigHashType.SIGHASH_ALL_TAPROOT
         else:
             return SigHashType.SIGHASH_ALL

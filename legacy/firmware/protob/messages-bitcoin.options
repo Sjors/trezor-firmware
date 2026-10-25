@@ -102,3 +102,11 @@ CoinJoinRequest.signature                                   max_size:64
 # Unused messages.
 PaymentRequest                                              skip_message:true
 PaymentRequestMemo                                          skip_message:true
+
+TxInputType.anti_exfil_host_commitment max_size:32
+TxInputType.anti_exfil_signer_nonce max_size:33
+TxInputType.anti_exfil_host_entropy max_size:32
+TxInput.anti_exfil_host_commitment max_size:32
+TxInput.anti_exfil_signer_nonce max_size:33
+TxInput.anti_exfil_host_entropy max_size:32
+TxRequestSerializedType.anti_exfil_nonce max_size:33

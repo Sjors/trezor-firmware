@@ -359,3 +359,138 @@ int zkp_bip340_tweak_private_key(const uint8_t *internal_private_key,
 
   return result;
 }
+
+// These domains are provisional pending assignment of a BIP number.
+static void anti_exfil_hash(const char *tag, const uint8_t *data, size_t size,
+                            uint8_t out[32]) {
+  uint8_t tag_hash[32] = {0};
+  sha256_Raw((const uint8_t *)tag, strlen(tag), tag_hash);
+  SHA256_CTX hash = {0};
+  sha256_Init(&hash);
+  sha256_Update(&hash, tag_hash, 32);
+  sha256_Update(&hash, tag_hash, 32);
+  sha256_Update(&hash, data, size);
+  sha256_Final(&hash, out);
+  memzero(tag_hash, sizeof(tag_hash));
+}
+
+// A 256-bit hash is less than twice the group order, so one conditional
+// subtraction reduces it. Avoid branching on the secret nonce hash.
+static void anti_exfil_reduce(uint8_t scalar[32]) {
+  static const uint8_t order[32] = {
+      0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,
+      0xff, 0xff, 0xff, 0xff, 0xfe, 0xba, 0xae, 0xdc, 0xe6, 0xaf, 0x48,
+      0xa0, 0x3b, 0xbf, 0xd2, 0x5e, 0x8c, 0xd0, 0x36, 0x41, 0x41};
+  uint8_t reduced[32] = {0};
+  uint16_t borrow = 0;
+  for (int i = 31; i >= 0; --i) {
+    uint16_t difference = (uint16_t)scalar[i] - order[i] - borrow;
+    reduced[i] = difference & 0xff;
+    borrow = difference >> 15;
+  }
+  uint8_t mask = (uint8_t)(borrow - 1);
+  for (size_t i = 0; i < 32; ++i) {
+    scalar[i] = (reduced[i] & mask) | (scalar[i] & (uint8_t)~mask);
+  }
+  memzero(reduced, sizeof(reduced));
+}
+
+static int anti_exfil_nonce_function(unsigned char *nonce32,
+                                     const unsigned char *msg, size_t msglen,
+                                     const unsigned char *key32,
+                                     const unsigned char *xonly_pk32,
+                                     const unsigned char *algo, size_t algolen,
+                                     void *data) {
+  (void)msg;
+  (void)key32;
+  (void)xonly_pk32;
+  (void)algo;
+  (void)algolen;
+  if (msglen != 32) return 0;
+  memcpy(nonce32, data, 32);
+  return 1;
+}
+
+static int anti_exfil(const uint8_t *private_key, const uint8_t *digest,
+                      const uint8_t *commitment, const uint8_t *signer_nonce,
+                      const uint8_t *entropy, uint8_t *out) {
+  int result = -1;
+  secp256k1_context *ctx = zkp_context_acquire_writable();
+  if (ctx == NULL) return -1;
+  secp256k1_keypair keypair = {0};
+  secp256k1_xonly_pubkey pubkey = {0};
+  secp256k1_pubkey nonce_point = {0};
+  uint8_t normalized[32] = {0}, masked[96] = {0}, aux[32] = {0};
+  uint8_t nonce[32] = {0}, encoded_nonce[33] = {0}, opening[32] = {0};
+  int parity = 0;
+  size_t encoded_size = sizeof(encoded_nonce);
+
+  if (secp256k1_context_writable_randomize(ctx) != 0 ||
+      secp256k1_keypair_create(ctx, &keypair, private_key) != 1 ||
+      secp256k1_keypair_xonly_pub(ctx, &pubkey, &parity, &keypair) != 1 ||
+      secp256k1_xonly_pubkey_serialize(ctx, masked + 32, &pubkey) != 1) {
+    goto cleanup;
+  }
+  memcpy(normalized, private_key, 32);
+  if (parity && secp256k1_ec_seckey_negate(ctx, normalized) != 1) goto cleanup;
+  anti_exfil_hash("BIP0340/aux", commitment, 32, aux);
+  for (size_t i = 0; i < 32; ++i) masked[i] = normalized[i] ^ aux[i];
+  memcpy(masked + 64, digest, 32);
+  // Do not use BIP0340/nonce: ordinary signing must never reuse k0.
+  anti_exfil_hash("BIP-EXFIL/nonce", masked, sizeof(masked), nonce);
+  anti_exfil_reduce(nonce);
+  if (secp256k1_ec_pubkey_create(ctx, &nonce_point, nonce) != 1 ||
+      secp256k1_ec_pubkey_serialize(ctx, encoded_nonce, &encoded_size,
+                                    &nonce_point,
+                                    SECP256K1_EC_COMPRESSED) != 1) {
+    goto cleanup;
+  }
+  if (entropy == NULL) {
+    memcpy(out, encoded_nonce, 33);
+    result = 0;
+    goto cleanup;
+  }
+  anti_exfil_hash("BIP-EXFIL/host", entropy, 32, opening);
+  if (signer_nonce == NULL || memcmp(opening, commitment, 32) != 0 ||
+      memcmp(encoded_nonce, signer_nonce, 33) != 0 ||
+      secp256k1_ec_seckey_verify(ctx, entropy) != 1 ||
+      secp256k1_ec_seckey_tweak_add(ctx, nonce, entropy) != 1) {
+    goto cleanup;
+  }
+  secp256k1_schnorrsig_extraparams params =
+      SECP256K1_SCHNORRSIG_EXTRAPARAMS_INIT;
+  params.noncefp = anti_exfil_nonce_function;
+  params.ndata = nonce;
+  if (secp256k1_schnorrsig_sign_custom(ctx, out, digest, 32, &keypair,
+                                       &params) != 1 ||
+      secp256k1_schnorrsig_verify(ctx, out, digest, 32, &pubkey) != 1) {
+    goto cleanup;
+  }
+  result = 0;
+cleanup:
+  memzero(&keypair, sizeof(keypair));
+  memzero(normalized, sizeof(normalized));
+  memzero(masked, sizeof(masked));
+  memzero(aux, sizeof(aux));
+  memzero(nonce, sizeof(nonce));
+  memzero(encoded_nonce, sizeof(encoded_nonce));
+  memzero(opening, sizeof(opening));
+  zkp_context_release_writable();
+  if (result != 0) memzero(out, entropy == NULL ? 33 : 64);
+  return result;
+}
+
+int zkp_bip340_anti_exfil_commit(const uint8_t *private_key,
+                                 const uint8_t *digest,
+                                 const uint8_t *commitment,
+                                 uint8_t *signer_nonce) {
+  return anti_exfil(private_key, digest, commitment, NULL, NULL, signer_nonce);
+}
+
+int zkp_bip340_anti_exfil_sign(const uint8_t *private_key,
+                               const uint8_t *digest, const uint8_t *commitment,
+                               const uint8_t *signer_nonce,
+                               const uint8_t *entropy, uint8_t *signature) {
+  return anti_exfil(private_key, digest, commitment, signer_nonce, entropy,
+                    signature);
+}

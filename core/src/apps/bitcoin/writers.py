@@ -56,6 +56,10 @@ def write_tx_input_check(w: Writer, i: TxInput) -> None:
     write_bytes_prefixed(w, i.orig_hash or b"")
     write_uint32(w, i.orig_index or 0)
     write_bytes_prefixed(w, i.script_pubkey or b"")
+    write_bytes_prefixed(w, i.anti_exfil_host_commitment or b"")
+    write_bytes_prefixed(w, i.anti_exfil_signer_nonce or b"")
+    write_bytes_prefixed(w, i.anti_exfil_host_entropy or b"")
+    write_uint32(w, i.anti_exfil_sighash or 0)
 
 
 def write_tx_output(

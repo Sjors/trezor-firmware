@@ -4,6 +4,7 @@
 
 from trezor import utils
 
+BitcoinAntiExfil = 100
 Bitcoin = 1
 Crypto = 5
 Shamir = 15

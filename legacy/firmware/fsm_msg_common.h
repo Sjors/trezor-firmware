@@ -97,6 +97,8 @@ bool get_features(Features *resp) {
   resp->capabilities[5] = Capability_Capability_Stellar;
   resp->capabilities[6] = Capability_Capability_U2F;
 #endif
+  resp->capabilities[resp->capabilities_count++] =
+      Capability_Capability_BitcoinAntiExfil;
   return resp;
 }
 

@@ -677,6 +677,10 @@ if TYPE_CHECKING:
         decred_staking_spend: "DecredStakingSpendType | None"
         script_pubkey: "AnyBytes | None"
         coinjoin_flags: "int"
+        anti_exfil_host_commitment: "AnyBytes | None"
+        anti_exfil_signer_nonce: "AnyBytes | None"
+        anti_exfil_host_entropy: "AnyBytes | None"
+        anti_exfil_sighash: "int | None"
 
         def __init__(
             self,
@@ -698,6 +702,10 @@ if TYPE_CHECKING:
             decred_staking_spend: "DecredStakingSpendType | None" = None,
             script_pubkey: "AnyBytes | None" = None,
             coinjoin_flags: "int | None" = None,
+            anti_exfil_host_commitment: "AnyBytes | None" = None,
+            anti_exfil_signer_nonce: "AnyBytes | None" = None,
+            anti_exfil_host_entropy: "AnyBytes | None" = None,
+            anti_exfil_sighash: "int | None" = None,
         ) -> None:
             pass
 
@@ -1021,6 +1029,7 @@ if TYPE_CHECKING:
         signature_index: "int | None"
         signature: "AnyBytes | None"
         serialized_tx: "AnyBytes | None"
+        anti_exfil_nonce: "AnyBytes | None"
 
         def __init__(
             self,
@@ -1028,6 +1037,7 @@ if TYPE_CHECKING:
             signature_index: "int | None" = None,
             signature: "AnyBytes | None" = None,
             serialized_tx: "AnyBytes | None" = None,
+            anti_exfil_nonce: "AnyBytes | None" = None,
         ) -> None:
             pass
 
