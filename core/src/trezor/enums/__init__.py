@@ -215,6 +215,7 @@ if TYPE_CHECKING:
         Backup = 2
 
     class Capability(IntEnum):
+        BitcoinAntiExfil = 100
         Bitcoin = 1
         Bitcoin_like = 2
         Binance = 3

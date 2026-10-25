@@ -166,11 +166,12 @@ message Features {
     enum Capability {
         option (has_bitcoin_only_values) = true;
 
+        Capability_BitcoinAntiExfil = 100 [(bitcoin_only) = true];  // draft BIP-EXFIL
         Capability_Bitcoin = 1 [(bitcoin_only) = true];
-        Capability_Bitcoin_like = 2;                    // Altcoins based on the Bitcoin source code
-        Capability_Binance = 3;                         // BNB Smart Chain
+        Capability_Bitcoin_like = 2;                                // Altcoins based on the Bitcoin source code
+        Capability_Binance = 3;                                     // BNB Smart Chain
         Capability_Cardano = 4;
-        Capability_Crypto = 5 [(bitcoin_only) = true];  // generic crypto operations for GPG, SSH, etc.
+        Capability_Crypto = 5 [(bitcoin_only) = true];              // generic crypto operations for GPG, SSH, etc.
         Capability_EOS = 6;
         Capability_Ethereum = 7;
         Capability_Lisk = 8 [deprecated = true];
