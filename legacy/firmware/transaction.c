@@ -568,6 +568,13 @@ bool tx_input_check_hash(Hasher *hasher, const TxInputType *input) {
   HASHER_UPDATE_BYTES(hasher, input->orig_hash.bytes, 32);
   HASHER_UPDATE_INT(hasher, input->orig_index, uint32_t);
   tx_script_hash(hasher, input->script_pubkey.size, input->script_pubkey.bytes);
+  tx_script_hash(hasher, input->anti_exfil_host_commitment.size,
+                 input->anti_exfil_host_commitment.bytes);
+  tx_script_hash(hasher, input->anti_exfil_signer_nonce.size,
+                 input->anti_exfil_signer_nonce.bytes);
+  tx_script_hash(hasher, input->anti_exfil_host_entropy.size,
+                 input->anti_exfil_host_entropy.bytes);
+  HASHER_UPDATE_INT(hasher, input->anti_exfil_sighash, uint32_t);
   return true;
 }
 
@@ -990,6 +997,10 @@ static uint32_t tx_input_script_size(const TxInputType *txinput,
                         multisig_script_size;
   } else if (script_type == InputScriptType_SPENDTAPROOT) {
     input_script_size = 1 + TXSIZE_SCHNORR_SIGNATURE;
+    if (txinput->has_anti_exfil_host_commitment &&
+        txinput->anti_exfil_sighash == 1) {
+      input_script_size += 1;  // Explicit SIGHASH_ALL byte.
+    }
   } else {
     input_script_size = (1 + TXSIZE_DER_SIGNATURE + 1 + TXSIZE_PUBKEY);
   }

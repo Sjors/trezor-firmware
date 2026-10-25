@@ -1497,6 +1497,24 @@ void signing_init(const SignTx *msg, const CoinInfo *_coin, const HDNode *_root,
 #define MIN(a, b) (((a) < (b)) ? (a) : (b))
 
 static bool signing_validate_input(const TxInputType *txinput) {
+  if (txinput->has_anti_exfil_host_commitment ||
+      txinput->has_anti_exfil_signer_nonce ||
+      txinput->has_anti_exfil_host_entropy || txinput->has_anti_exfil_sighash) {
+    if (!txinput->has_anti_exfil_host_commitment ||
+        txinput->anti_exfil_host_commitment.size != 32 || serialize ||
+        txinput->script_type != InputScriptType_SPENDTAPROOT ||
+        txinput->anti_exfil_sighash > 1 ||
+        txinput->has_anti_exfil_signer_nonce !=
+            txinput->has_anti_exfil_host_entropy ||
+        (txinput->has_anti_exfil_signer_nonce &&
+         (txinput->anti_exfil_signer_nonce.size != 33 ||
+          txinput->anti_exfil_host_entropy.size != 32))) {
+      fsm_sendFailure(FailureType_Failure_DataError,
+                      _("Invalid anti-exfil request"));
+      signing_abort();
+      return false;
+    }
+  }
   if (txinput->prev_hash.size != 32) {
     fsm_sendFailure(FailureType_Failure_DataError,
                     _("Provided prev_hash is invalid."));
@@ -2651,7 +2669,9 @@ static bool signing_confirm_tx(void) {
 static uint32_t signing_hash_type(const TxInputType *txinput) {
   uint32_t hash_type = SIGHASH_ALL;
   if (txinput->script_type == InputScriptType_SPENDTAPROOT) {
-    hash_type = SIGHASH_ALL_TAPROOT;
+    hash_type = txinput->has_anti_exfil_host_commitment
+                    ? txinput->anti_exfil_sighash
+                    : SIGHASH_ALL_TAPROOT;
   }
 
   if (coin->has_fork_id) {
@@ -3185,8 +3205,39 @@ static bool signing_sign_ecdsa(TxInputType *txinput, const uint8_t *private_key,
   return true;
 }
 
-static bool signing_sign_bip340(const uint8_t *private_key,
-                                const uint8_t *hash) {
+static bool signing_sign_bip340(const uint8_t *private_key, const uint8_t *hash,
+                                const TxInputType *txinput) {
+  if (txinput->has_anti_exfil_host_commitment) {
+    uint8_t output_key[32] = {0};
+    bool round_two = txinput->has_anti_exfil_host_entropy;
+    bool success =
+        zkp_bip340_tweak_private_key(private_key, NULL, output_key) == 0;
+    resp.has_serialized = true;
+    resp.serialized.has_signature_index = true;
+    resp.serialized.signature_index = idx1;
+    if (success && round_two) {
+      success = zkp_bip340_anti_exfil_sign(
+                    output_key, hash, txinput->anti_exfil_host_commitment.bytes,
+                    txinput->anti_exfil_signer_nonce.bytes,
+                    txinput->anti_exfil_host_entropy.bytes,
+                    resp.serialized.signature.bytes) == 0;
+      resp.serialized.has_signature = success;
+      resp.serialized.signature.size = success ? 64 : 0;
+    } else if (success) {
+      success = zkp_bip340_anti_exfil_commit(
+                    output_key, hash, txinput->anti_exfil_host_commitment.bytes,
+                    resp.serialized.anti_exfil_nonce.bytes) == 0;
+      resp.serialized.has_anti_exfil_nonce = success;
+      resp.serialized.anti_exfil_nonce.size = success ? 33 : 0;
+    }
+    memzero(output_key, sizeof(output_key));
+    if (!success) {
+      fsm_sendFailure(FailureType_Failure_ProcessError,
+                      _("Invalid anti-exfil transcript"));
+      signing_abort();
+    }
+    return success;
+  }
   resp.has_serialized = true;
   resp.serialized.has_signature_index = true;
   resp.serialized.signature_index = idx1;
@@ -3237,7 +3288,7 @@ static bool signing_sign_segwit_input(TxInputType *txinput) {
 
     if (!input_validate_path(txinput) || !tx_info_check_input(&info, txinput) ||
         !input_derive_node(txinput) ||
-        !signing_sign_bip340(node.private_key, hash)) {
+        !signing_sign_bip340(node.private_key, hash, txinput)) {
       return false;
     }
 
