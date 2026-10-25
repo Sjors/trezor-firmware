@@ -244,12 +244,57 @@ static MP_DEFINE_CONST_FUN_OBJ_VAR_BETWEEN(
     mod_trezorcrypto_bip340_tweak_secret_key_obj, 1, 2,
     mod_trezorcrypto_bip340_tweak_secret_key);
 
+/// def anti_exfil(
+///     secret_key: AnyBytes, digest: AnyBytes, commitment: AnyBytes,
+///     signer_nonce: AnyBytes | None, entropy: AnyBytes | None,
+/// ) -> bytes:
+///     """Commit to a draft BIP-EXFIL nonce, or verify the reveal and sign."""
+static mp_obj_t mod_trezorcrypto_bip340_anti_exfil(size_t n_args,
+                                                   const mp_obj_t *args) {
+  (void)n_args;
+  mp_buffer_info_t sk = {0}, digest = {0}, commitment = {0}, nonce = {0},
+                   entropy = {0};
+  mp_get_buffer_raise(args[0], &sk, MP_BUFFER_READ);
+  mp_get_buffer_raise(args[1], &digest, MP_BUFFER_READ);
+  mp_get_buffer_raise(args[2], &commitment, MP_BUFFER_READ);
+  bool signing = args[4] != mp_const_none;
+  if (sk.len != 32 || digest.len != 32 || commitment.len != 32 ||
+      (args[3] != mp_const_none) != signing) {
+    mp_raise_ValueError(MP_ERROR_TEXT("Invalid anti-exfil request"));
+  }
+  if (signing) {
+    mp_get_buffer_raise(args[3], &nonce, MP_BUFFER_READ);
+    mp_get_buffer_raise(args[4], &entropy, MP_BUFFER_READ);
+    if (nonce.len != 33 || entropy.len != 32) {
+      mp_raise_ValueError(MP_ERROR_TEXT("Invalid anti-exfil transcript"));
+    }
+  }
+  vstr_t out = {0};
+  vstr_init_len(&out, signing ? 64 : 33);
+  int result =
+      signing ? zkp_bip340_anti_exfil_sign(sk.buf, digest.buf, commitment.buf,
+                                           nonce.buf, entropy.buf,
+                                           (uint8_t *)out.buf)
+              : zkp_bip340_anti_exfil_commit(sk.buf, digest.buf, commitment.buf,
+                                             (uint8_t *)out.buf);
+  if (result != 0) {
+    vstr_clear(&out);
+    mp_raise_ValueError(MP_ERROR_TEXT("Invalid anti-exfil transcript"));
+  }
+  return mp_obj_new_bytes_from_vstr(&out);
+}
+static MP_DEFINE_CONST_FUN_OBJ_VAR_BETWEEN(
+    mod_trezorcrypto_bip340_anti_exfil_obj, 5, 5,
+    mod_trezorcrypto_bip340_anti_exfil);
+
 static const mp_rom_map_elem_t mod_trezorcrypto_bip340_globals_table[] = {
     {MP_ROM_QSTR(MP_QSTR___name__), MP_ROM_QSTR(MP_QSTR_bip340)},
     {MP_ROM_QSTR(MP_QSTR_generate_secret),
      MP_ROM_PTR(&mod_trezorcrypto_bip340_generate_secret_obj)},
     {MP_ROM_QSTR(MP_QSTR_publickey),
      MP_ROM_PTR(&mod_trezorcrypto_bip340_publickey_obj)},
+    {MP_ROM_QSTR(MP_QSTR_anti_exfil),
+     MP_ROM_PTR(&mod_trezorcrypto_bip340_anti_exfil_obj)},
     {MP_ROM_QSTR(MP_QSTR_sign), MP_ROM_PTR(&mod_trezorcrypto_bip340_sign_obj)},
     {MP_ROM_QSTR(MP_QSTR_verify_publickey),
      MP_ROM_PTR(&mod_trezorcrypto_bip340_verify_publickey_obj)},

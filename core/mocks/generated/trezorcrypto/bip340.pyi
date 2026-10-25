@@ -62,3 +62,11 @@ def tweak_secret_key(
     """
     Tweaks the secret key with the specified root_hash.
     """
+
+
+# upymod/modtrezorcrypto/modtrezorcrypto-bip340.h
+def anti_exfil(
+    secret_key: AnyBytes, digest: AnyBytes, commitment: AnyBytes,
+    signer_nonce: AnyBytes | None, entropy: AnyBytes | None,
+) -> bytes:
+    """Commit to a draft BIP-EXFIL nonce, or verify the reveal and sign."""

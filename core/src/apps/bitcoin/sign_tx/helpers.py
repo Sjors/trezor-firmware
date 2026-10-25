@@ -477,6 +477,7 @@ def _clear_tx_request(tx_req: TxRequest) -> None:
     details.tx_hash = None
     details.extra_data_len = None
     details.extra_data_offset = None
+    serialized.anti_exfil_nonce = None
     serialized.signature = None
     serialized.signature_index = None
     # typechecker thinks serialized_tx is `bytes`, which is immutable
@@ -537,6 +538,29 @@ def _sanitize_tx_meta(tx: PrevTx, coin: CoinInfo) -> PrevTx:
 
 def _sanitize_tx_input(txi: TxInput, coin: CoinInfo) -> TxInput:
     script_type = txi.script_type  # local_cache_attribute
+
+    if (
+        txi.anti_exfil_host_commitment is not None
+        or txi.anti_exfil_signer_nonce is not None
+        or txi.anti_exfil_host_entropy is not None
+        or txi.anti_exfil_sighash is not None
+    ):
+        if (
+            script_type != InputScriptType.SPENDTAPROOT
+            or txi.anti_exfil_host_commitment is None
+            or len(txi.anti_exfil_host_commitment) != 32
+            or (txi.anti_exfil_sighash or 0) not in (0, 1)
+            or (txi.anti_exfil_signer_nonce is None)
+            != (txi.anti_exfil_host_entropy is None)
+        ):
+            raise DataError("Invalid anti-exfil request")
+        if txi.anti_exfil_host_entropy is not None:
+            if (
+                txi.anti_exfil_signer_nonce is None
+                or len(txi.anti_exfil_host_entropy) != 32
+                or len(txi.anti_exfil_signer_nonce) != 33
+            ):
+                raise DataError("Invalid anti-exfil transcript")
 
     if len(txi.prev_hash) != TX_HASH_SIZE:
         raise DataError("Provided prev_hash is invalid.")
